@@ -1,0 +1,92 @@
+[
+  {
+    "program_name":"Eating Out",
+    "bls_name":"Food away from home",
+    "ser_id":"CUSR0000SEFV",
+    "value":2.84614
+  },
+  {
+    "program_name":"Movies",
+    "bls_name":"Admission to movies, theaters, and concerts",
+    "ser_id":"CUSR0000SS62031",
+    "value":1.98733
+  },
+  {
+    "program_name":"Clothing",
+    "bls_name":"Apparel less footwear",
+    "ser_id":"CUSR0000SA311",
+    "value":3.58443
+  },
+  {
+    "program_name":"Toys",
+    "bls_name":"Toys",
+    "ser_id":"CUSR0000SERE01",
+    "value":-5.05604
+  },
+  {
+    "program_name":"Musical Instruments",
+    "bls_name":"Music instruments and accessories",
+    "ser_id":"CUSR0000SERE03",
+    "value":0.2421
+  },
+  {
+    "program_name":"Gym Membership",
+    "bls_name":"Club dues and fees for participant sports and group exercises",
+    "ser_id":"CUSR0000SERF01",
+    "value":2.80832
+  },
+  {
+    "program_name":"Pet Food",
+    "bls_name":"Pet food",
+    "ser_id":"CUSR0000SS61031",
+    "value":2.80452
+  },
+  {
+    "program_name":"Groceries",
+    "bls_name":"Food at home",
+    "ser_id":"CUSR0000SAF11",
+    "value":2.46232
+  },
+  {
+    "program_name":"Mortgage Payment",
+    "bls_name":"Housing",
+    "ser_id":"CPIHOSSL",
+    "value":1.65041
+  },
+  {
+    "program_name":"Medical Care",
+    "bls_name":"Medical care services",
+    "ser_id":"CUSR0000SAM2",
+    "value":3.90181
+  },
+  {
+    "program_name":"Car Maintenance",
+    "bls_name":"Motor vehicle maintenance and repair",
+    "ser_id":"CUSR0000SETD",
+    "value":1.77124
+  },
+  {
+    "program_name":"Utilities",
+    "bls_name":"Fuels and utilities",
+    "ser_id":"CUSR0000SAH2",
+    "value":-0.61904
+  },
+  {
+    "program_name":"Cable/Satellite",
+    "bls_name":"Cable and satellite television and radio service",
+    "ser_id":"CUSR0000SERA02",
+    "value":4.39651
+  },
+  {
+    "program_name":"Education",
+    "bls_name":"Education",
+    "ser_id":"CUSR0000SAE1",
+    "value":4.12002
+  },
+  {
+    "program_name":"Text Books and School Supplies",
+    "bls_name":"Educational books and supplies",
+    "ser_id":"CUSR0000SEEA",
+    "value":6.23187
+  }
+]

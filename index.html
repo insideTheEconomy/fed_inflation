@@ -1,0 +1,38 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="JS/d3.v3.js"></script>
+	<script type="text/javascript" src="JS/jquery-1.9.1.js"></script>
+	<script type="text/javascript" src="JS/jquery-ui.js"></script>
+	<script type="text/javascript" src="JS/jquery.easing.1.3.js"></script>
+	<script type="text/javascript" src="JS/data-ck.js"></script>
+	<script type="text/javascript" src="JS/pie.js"></script>
+	<script type="text/javascript" src="JS/functions.js"></script>
+	
+	
+	<link rel="stylesheet" type="text/css" href="CSS/style.css">
+	<link rel >
+</head>
+<body>
+<p class = "debug"></p>
+<audio id = "click" style="display: none;" src="SND/worms.mp3"></audio>
+<div id="container">
+	
+	<div class="col left"></div>
+	<div class="col right">
+		<h1>WHAT'S YOUR INFLATION RATE?</h1>
+		<h2>What you buy can make your inflation rate different from the national rate.</h2>
+		<div class = "bin"><div class = "lab"><h2>Drag your 5 biggest monthly expenses here.</h2></div></div>
+	</div>	
+	<div class ="col calc">
+		<h1>HOW DO YOU SPEND YOUR MONEY?</h1><h2>Adjust the size of each slice to approximate the amount you spend per month.</h2>
+			<div class ="rate inactive"><p>Your Inflation Rate</p><h1 class="live_rate "></h1></div>
+		</div>
+
+</div>
+<div id ="footer"><div class="phase1"><h3>NEXT</h3></div></div>
+<script>
+	$(init())
+</script>
+</body>
+</html>
