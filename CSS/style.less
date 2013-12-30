@@ -65,7 +65,11 @@ p{
 }
 
 @icIn : @gridStep - @pad;
-
+.foreign{text-align:center;
+	& p{
+		.iconlabel;
+	}
+}
 .tile{
 
 	float: left;
@@ -76,17 +80,21 @@ p{
 	
 
 	& p{
-		font-size: .9em;
-		line-height: 1em;
-		width: auto;
-		margin-top:-.9em;
-		text-shadow: 0 -2px 3px black;
+		.iconlabel;
 		
 	}
 	text-align:center;
 	
 }
- 
+
+.iconlabel{
+	font-size: .9em;
+	line-height: 1em;
+	width: auto;
+	margin-top:-.9em;
+	text-shadow: 0 -2px 3px black;
+}
+
 .icon{
 	margin:@pad / 2;
 	margin-top:0;
@@ -106,14 +114,6 @@ p{
 }
 
 
-.icon svg{ 
-	margin: @pad /2;
-	margin-top: @pad /3;
-	width: @icIn - @pad ;
-	height: @icIn - @pad ;
-	fill: @lightblue;
-	stroke: fade(@blue, 20%);
-}
 
 
 
@@ -282,14 +282,23 @@ p{
 	fill: white;
 }
 
-.icongroup path, polygon{
-	stroke: @lightblue;
+.icongroup polygon{
 	fill: @lightblue;
+	stroke: fade(@blue, 20%);
 }
 
-.icongroup  polygon{
-	stroke: @black;
+.icongroup path{
 	fill: @lightblue;
+	stroke: @lightblue;
+}
+
+.icon svg{ 
+	margin: @pad /2;
+	margin-top: @pad /3;
+	width: @icIn - @pad ;
+	height: @icIn - @pad ;
+	fill: @lightblue;
+	stroke: fade(@blue, 20%);
 }
 
 
