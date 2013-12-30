@@ -130,10 +130,10 @@ inPp.build = function(sel, _data, _icons){
 	            d.outerRadius = r;
 	            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
 	        })
-	
+	this.icongroup.selectAll("path").attr("fill",null);
 	this.scaleByWeight = function(d){
 		var scale = +d.data.weight;
-		scale /= 100;
+		scale /= 200;
 		scale *= _self.sliceScale;
 		return scale;
 	}
@@ -141,7 +141,8 @@ inPp.build = function(sel, _data, _icons){
 	this.slices.each(function(d){
 						_self.initScale = d.data.weight;
 						document.getElementById(d.data.ser_id).appendChild(icons[d.data.ser_id]);
-				});
+			});
+				
 	this.icongroup.select("svg").attr({
 		"x":function(d){
 			return - _self.scaleByWeight(d)/2;
