@@ -16,7 +16,7 @@ var init = function(){
 		drawIcons();
 	})*/
 	drawIcons();
-	$(".phase1").click(function(){
+	$(".phase1").	click(function(){
 		//console.log("going to phase 2");
 		iconsOff();
 		$(this).toggleClass("phase1 phase2");
