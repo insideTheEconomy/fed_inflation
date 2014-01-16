@@ -275,7 +275,6 @@ p{
 .slice path{
 	stroke: white;
 	stroke-width: 2;
-	fill-opacity: 0;
 }
 .slice text{
 	font-family: "sub-title";
@@ -301,6 +300,12 @@ p{
 	stroke: fade(@blue, 20%);
 }
 
+.dragBody{
+	&.inactive{
+		visibility: hidden;
+	}
+	visibility: visible;
+}
 
 
 

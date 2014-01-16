@@ -16,11 +16,23 @@ var init = function(){
 		drawIcons();
 	})*/
 	drawIcons();
-	$(".phase1").	click(function(){
+	window.setTimeout( function(){
+	//	d3.selectAll("path, circle, polygon, line").attr("fill",  null).attr("stroke",null);
+	}, 1000)
+	
+	$("#footer").on("click", "#button.phase1", function(){
 		//console.log("going to phase 2");
-		iconsOff();
+		phase2Transition();
 		$(this).toggleClass("phase1 phase2");
-	})
+	});
+	
+	$("#footer").on("click", "#button.phase2", function(){
+		$(this).toggleClass("phase2 phase3");
+		$(this).find("h3").text("RESET");
+		phase3Transition();
+	});
+
+	
 	
 }
 var duration = 300;
@@ -44,14 +56,14 @@ var makePie = function(){
 	binW = $(".bin").width();
 	p = new inPie(binW, binW);
 	p.build(".bin", selected, icons);
-
+	
 	$(document).on("RATE", function(e){
 			var rate = e.rate;
 			$(".live_rate").text(rate).parent().toggleClass("inactive",false).redraw();
 		});
 }
 
-var iconsOff = function(){
+var phase2Transition = function(){
 	getTileData();
 	$tiles = $(".tile:not(.inBin)");
 	numtiles = $tiles.length;
@@ -89,74 +101,87 @@ var iconsOff = function(){
 	})
 }
 
+var phase3Transition = function(){
+	var heading ="HOW DOES YOUR RATE COMPARE?"
+	var body = "You might be spending money on things that have a different inflation rate from the national rate."
+		$(".heading").text(heading);
+		$(".body").text(body);
+		
+	
+
+}
+
 var icons = {};
 var drawIcons = function (){
 	//console.log(data_json);
 	container = d3.select(".left");
 	//console.log("drawing icons")
 	tile = container.selectAll("div").data(data_json).enter()
-		.append("div").attr("class","tile")
+		.append("div").attr("class","tile");
 			
-			tile.append("div").attr("class","icon").attr("id",function(d){return d.ser_id});
-				tile.select(".icon").each(function(d){
-				
-					var fileString = "SVG/"+d.ser_id+".svg";
-					//console.log(fileString);
-					
-					d3.xml(fileString, "image/svg+xml", function(_doc){
-						svg = _doc.getElementsByTagName("g");
-						node = document.importNode(_doc.documentElement, true);
-						icons[d.ser_id] = node;
-						document.getElementById(d.ser_id).appendChild(node);
-					});
-					
-				});
-			tile.append("p").text(function(d){return d.program_name})
-			
-			$(".tile").draggable({
+	tile.append("div").attr("class","icon").attr("id",function(d){return d.ser_id});
+	tile.select(".icon").each(function(d){
+	
+		var fileString = "SVG/"+d.ser_id+".svg";
+		//console.log(fileString);
+		
+		d3.xml(fileString, "image/svg+xml", function(_doc){
+			console.log(_doc)
+			node = document.importNode(_doc.documentElement, true);
+			console.log($(node));
+			$(node).find("path, circle, polygon, line").attr("fill","#A4DBE8");
+			icons[d.ser_id] = node;
+			document.getElementById(d.ser_id).appendChild(node);
+		});
+		
+	});
+	tile.append("p").text(function(d){return d.program_name})
+	
+	$(".tile").draggable({
 
-				create : function(e, ui){
-					$this = $(this);
-					thisPos = $this.offset();
-				},
-				start : function(e, ui){
-					$(this).find(".icon").toggleClass("active", true);
-					$(this).find("p").fadeOut(200);
-				},
-				stop : function(e, ui){
-					$this = $(this);
-					$this.find(".icon").toggleClass("active", false);
-					$this.find("p").fadeIn(200);
-					//console.log(this);
-					if (!$this.hasClass("inBin")){
-						//console.log("not in bin");
-						$this.animate({
-							left : 0,
-							top : 0
-						})
-					}
-				}
-			})
-			
-			$(".bin").droppable({
-				accept : ".tile",
-				activeClass : "active",
-				hoverClass : "drop-hover",
-				tolerance: "fit",
-				drop : function(e,ui){
-					ui.draggable.toggleClass("inBin", true);
-					$(".lab").toggleClass("inactive", true);
-				}
-			})
-			
-			$(".left").droppable({
-				accept : ".inBin",
-				activeClass : ".active",
-				hoverClass : ".drop-hover",
-				drop : function(e,ui){
-					ui.draggable.toggleClass("inBin", false)
-				}
-			})
+		create : function(e, ui){
+			$this = $(this);
+			thisPos = $this.offset();
+		},
+		start : function(e, ui){
+			$(this).find(".icon").toggleClass("active", true);
+			$(this).find("p").fadeOut(200);
+		},
+		stop : function(e, ui){
+			$this = $(this);
+			$this.find(".icon").toggleClass("active", false);
+			$this.find("p").fadeIn(200);
+			//console.log(this);
+			if (!$this.hasClass("inBin")){
+				//console.log("not in bin");
+				$this.animate({
+					left : 0,
+					top : 0
+				})
+			}
+		}
+	})
+	
+	$(".bin").droppable({
+		accept : ".tile",
+		activeClass : "active",
+		hoverClass : "drop-hover",
+		tolerance: "fit",
+		drop : function(e,ui){
+			ui.draggable.toggleClass("inBin", true);
+			$(".lab").toggleClass("inactive", true);
+		}
+	})
+	
+	$(".left").droppable({
+		accept : ".inBin",
+		activeClass : ".active",
+		hoverClass : ".drop-hover",
+		drop : function(e,ui){
+			ui.draggable.toggleClass("inBin", false)
+		}
+	})
+	console.log("woot")
 };
 
 

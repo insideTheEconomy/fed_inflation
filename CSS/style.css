@@ -245,7 +245,6 @@ p {
 .slice path {
   stroke: white;
   stroke-width: 2;
-  fill-opacity: 0;
 }
 .slice text {
   font-family: "sub-title";
@@ -266,4 +265,10 @@ p {
   height: 60px;
   fill: #a4dbe8;
   stroke: rgba(16, 6, 159, 0.2);
+}
+.dragBody {
+  visibility: visible;
+}
+.dragBody.inactive {
+  visibility: hidden;
 }

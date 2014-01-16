@@ -22,7 +22,7 @@ Object.defineProperty(inPp, "dataset",{
 	get: function(){return this.data},
 	set: function(ds){
 		this.data = ds;
-		console.log("DATASET RECEIVED");
+		//console.log("DATASET RECEIVED");
 		this.update();
 		}});
 
@@ -65,8 +65,9 @@ inPp.build = function(sel, _data, _icons){
 
 	
 	this.slices.append("svg:path")
-	            .attr("fill", function(d, i) { return color(i); } ) //set the color for each slice to be chosen from the color function defined above
-	            .attr("d", this.arc)                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+	            .attr("fill", function(d, i) { return null } ) //set the color for each slice to be chosen from the color function defined above
+	            .style("fill-opacity","0")	
+				.attr("d", this.arc)                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing function
 
 	this.icongroup = this.slices.append("g").attr("class","icongroup").attr("id", function(d){return d.data.ser_id })   
 		.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
@@ -82,11 +83,21 @@ inPp.build = function(sel, _data, _icons){
 		scale *= _self.sliceScale;
 		return scale;
 	}
-			
+
 	this.slices.each(function(d){
+		var changeType = function ( elem ){
+			var nElem = document.createElement("g");
+			elem = elem.cloneNode(true);
+			while (elem.firstChild){
+				nElem.appendChild(elem.firstChild);
+			}
+			return nElem;
+		}
 						_self.initScale = d.data.weight;
-						document.getElementById(d.data.ser_id).appendChild(icons[d.data.ser_id]);
-				});
+					
+						document.getElementById(d.data.ser_id).appendChild( _self.icons[d.data.ser_id] );		
+	});
+
 	this.icongroup.select("svg").attr({
 		"x":function(d){
 			return - _self.scaleByWeight(d)/2;
@@ -117,21 +128,44 @@ inPp.build = function(sel, _data, _icons){
 		this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
 			.attr({
 				"class":"series_weight",
-			}).text(function(d, i) { return +_self.data[i].weight.toFixed(2); });        //get the label from our original data array  */
+			}).text(function(d, i) { return _self.data[i].weight.toFixed(0)+"%"; });        //get the label from our original data array  */
 			var initA;
 			var lastA;
 			
+		//drag icon
+		this.dragProp = {
+			w:+100,
+			h:+100,
+			off: +50
+		}
+		this.dragBody = this.svg.append("foreignObject")
+			.attr({
+				"width":this.dragProp.w,
+				"height":this.dragProp.h,
+				"class": "dragBody inactive"
+			});
 			
+		this.dragBody.append("xhtml:body").attr("class","dragImg").append("img").attr("src","SVG/drag.svg")
+		
+		
 		//set up custom drag action
 		this.drag = d3.behavior.drag()
 			.origin(null).on("dragstart", function(){
+				
 				initA = ev2point(d3.event).deg;
 				lastA = initA;
-				console.log("initial Angle :: "+initA);
+				//console.log("initial Angle :: "+initA);
 			})
 			.on("drag", function(d, i){
+				_self.dragBody.classed("inactive", false);
+			
 				dData = _self.data;
 				var point = ev2point(d3.event);
+					_self.dragBody.attr({
+						//x: point.x-_self.dragProp.off,
+						//y: point.y-_self.dragProp.off,
+						transform: "translate("+(point.x-_self.dragProp.off)+" "+(point.y-_self.dragProp.off)+" ) rotate("+point.deg+" 50 50)"
+					})
 				delta = point.deg - lastA;
 				thisI = i;
 				if(Math.abs(delta) < 10){  //limit "jumpiness"
@@ -142,17 +176,32 @@ inPp.build = function(sel, _data, _icons){
 				}
 				_self.dataset = dData;	//this is a setter, automatically re-draws
 				lastA = point.deg;
-			})	
+			}).on("dragend", function(){
+				_self.dragBody.classed("inactive", true);
+			})
 			//helper function for drag 
 			//using d3 drag event, return a point and rad/deg rotation around the origin
 		var ev2point = function(ev){
+			console.log(ev);
+
 			var pi = Math.PI;
 			res = {}
 			var mouse = {};
-			mouse.x = ev.sourceEvent.clientX - _self.offset.x;
-			mouse.y = ev.sourceEvent.clientY - _self.offset.y;
+			var client = {};
+			client.x = ev.sourceEvent.clientX;
+			client.y = ev.sourceEvent.clientY;
+			
+			mouse.x = ev.sourceEvent.clientX - _self.offset.x +16;
+			mouse.y = ev.sourceEvent.clientY - _self.offset.y +32;
+			
+		//	console.log("client Mouse: "+client.x+","+client.y);
+		//	console.log("obj Mouse: "+mouse.x+","+mouse.y)
+			res.x = +ev.x;
+			res.y = +ev.y;
+			res.client = client;
 			res.mouse = mouse;
-			res.radians = Math.atan2(res.mouse.y, res.mouse.x) + pi;
+		//	res.radians = Math.atan2(res.mouse.y, res.mouse.x) + pi;
+			res.radians = Math.atan2(res.y, res.x) + pi;
 			res.deg = res.radians*(180/pi);
 			return res;
 		}
@@ -176,27 +225,31 @@ inPp.update = function(){
 					
 		this.slices.select(".icongroup")
 			.attr("transform", function(d) { //set the icon/label's origin to the center of the arc
-				//we have to make sure to set these before calling arc.centroid
 				d.innerRadius = 0;
 				d.outerRadius = r;
 				var _scale = d.data.weight/_self.initScale;
+				_scale = (_scale > 1) ? 1 : _scale;
 				return "translate(" + _self.arc.centroid(d) + ") scale("+_scale+","+_scale+")";        //this gives us a pair of coordinates like [50, 50]
 	        })
 	
 		this.foreignBody.select("h2")  //update label for each foreignBody
-			.text(function(d, i) { return +_self.data[i].weight.toFixed(2); });        
+			.text(function(d, i) { return _self.data[i].weight.toFixed(2)+"%"; });        
 	
 		var weightedSum = 0;
-		
+		var vals = "";
+		var weights = "";
 		this.data.forEach(function(d,i){
 			
 			var weightedValue = d.value * d.weight;
-			console.log("weighted value :" +weightedValue);
+			vals += d.value+",";
+			//console.log("weighted value :" +weightedValue);
 			weightedSum += weightedValue;
 		})
-		console.log("sum :"+weightedSum);
+		console.log("Weighted sum: "+weightedSum / 100);
+		console.log("values: "+vals);
+		//console.log("sum :"+weightedSum);
 		var averageRate = weightedSum / 100;
-		console.log("average rate :"+averageRate);
+		//console.log("average rate :"+averageRate);
 		$.event.trigger({
 			type: "RATE",
 			rate: averageRate.toFixed(2),
