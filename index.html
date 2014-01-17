@@ -14,6 +14,24 @@
 	<link rel >
 </head>
 <body>
+	<svg height="0" width="0">
+	<defs>
+	    <filter id="glow" height="130%">
+	    <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blurred">
+	    </feGaussianBlur>
+	    <feComponentTransfer in1 = "blurred" result="colored">
+	        <feFuncR type="linear" slope="-1" intercept="1"></feFuncR>
+	        <feFuncG type="linear" slope="-1" intercept="1"></feFuncG>
+	        <feFuncB type="linear" slope="-1" intercept="1"></feFuncB>
+	        <feFuncA type="linear" slope="2"></feFuncA>
+	    </feComponentTransfer>
+	      <feMerge> 
+	        <feMergeNode in = "colored"></feMergeNode>
+	        <feMergeNode in="SourceGraphic"></feMergeNode> 
+	      </feMerge>
+	    </filter>
+	  </defs>
+	</svg>
 <p class = "debug"></p>
 <audio id = "click" style="display: none;" src="SND/worms.mp3"></audio>
 <div id="container">
@@ -36,5 +54,6 @@
 <script>
 	$(init())
 </script>
+
 </body>
 </html>

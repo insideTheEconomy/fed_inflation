@@ -69,6 +69,7 @@ p {
   height: 124;
   -webkit-box-sizing: border-box;
   margin: 0;
+  margin-top: 1em;
   text-align: center;
 }
 .tile p {
@@ -98,7 +99,10 @@ p {
 }
 .icon.active {
   background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 58, color-stop(0%, #000000), color-stop(100%, #1006ff));
-  -webkit-box-shadow: inset 0 0 5px 1px #a4dbe8, inset 0 0 2px 1px #ffffff, inset 0 0px 20px 5px #a4dbe8, inset 0 0 1px 1px #ffffff, 0px 10px 15px #000000;
+  /*-webkit-box-shadow: inset 0 0 5px 1px @lightblue, inset 0 0 2px 1px #ffffff, inset 0 0px 20px 5px @lightblue,inset 0 0 1px 1px #ffffff, 0px 10px 15px black;
+	  */
+
+  -webkit-box-shadow: -2px 2px 4px #000000, inset 0 0 4px 2px #ffffff;
 }
 .col {
   float: left;
@@ -243,8 +247,8 @@ p {
 }
 /*SVG*/
 .slice path {
-  stroke: white;
-  stroke-width: 2;
+  stroke: ;
+  stroke-width: 0;
 }
 .slice text {
   font-family: "sub-title";
@@ -252,11 +256,11 @@ p {
 }
 .icongroup polygon {
   fill: #a4dbe8;
-  stroke: rgba(16, 6, 159, 0.2);
+  stroke: #10069f;
 }
 .icongroup path {
   fill: #a4dbe8;
-  stroke: #a4dbe8;
+  stroke: #10069f;
 }
 .icon svg {
   margin: 16px;
@@ -271,4 +275,16 @@ p {
 }
 .dragBody.inactive {
   visibility: hidden;
+}
+.handle {
+  stroke: white;
+  fill: #a4dbe8;
+  stroke-width: 2;
+}
+.handle.arrow {
+  stroke: #10069f;
+  stroke-width: 1;
+}
+.handle.arrow.active {
+  fill: green;
 }

@@ -15,6 +15,7 @@ var inPie = function( _w, _h) {
 	this.offset = {x: this.w/2, y:this.h/2}
 	this.textPad = 12;
 	this.sliceScale = this.r;
+	this.startAngle = 0;
 }
 inPp = inPie.prototype;
 
@@ -25,7 +26,14 @@ Object.defineProperty(inPp, "dataset",{
 		//console.log("DATASET RECEIVED");
 		this.update();
 		}});
+		
+inPp.rad2deg = function(rad){
+	return +rad*(180/Math.PI); 
+}
 
+inPp.deg2rad = function(deg){
+	return +deg*(Math.PI/180); 
+}
 
 
 inPp.build = function(sel, _data, _icons){
@@ -48,13 +56,14 @@ inPp.build = function(sel, _data, _icons){
 
 	//Helper to create paths from arc data
 	this.arc = d3.svg.arc()
-	    .outerRadius( this.r ).innerRadius(0);
+	    .outerRadius( this.r ).innerRadius(90);
 
 	
 
 		
 	this.pie = d3.layout.pie()           //this will create arc data for us given a list of values
 	    .value(function(d) { return d.weight; }).sort(null);    //we must tell it out to access the value of each element in our data array
+	
 
 	this.slices = this.svg.selectAll("g.slice")     
 		.data(this.pie(this.data))     //bind data to the pie layout            
@@ -63,6 +72,40 @@ inPp.build = function(sel, _data, _icons){
 		.attr("class", "slice")
 	
 
+	
+	this.handles = this.svg.selectAll("g.handles").data(this.pie(this.data)).enter().append("g");
+	this.handles.attr({
+	    "class":"handles",
+	    transform: function(d,i){
+			var angle = +d.startAngle;
+			//console.log(angle);
+	        return "rotate("+_self.rad2deg(angle)+")"
+	    }
+
+	}).append("line").attr({
+	    x1: 0, y1: 0,
+	    x2: 0, y2: -_self.r,
+	    "class": "handle bar"
+	});
+	
+	var arrH = 12;
+	var arrW = 24;
+	var gutter = 2;
+	var cy = -(this.r-arrH);
+	
+	this.polyR = 	[{"x":gutter, "y":cy-arrH}, {"x":gutter, "y":cy+arrH}, {"x":gutter+arrW, "y":cy}];
+	this.polyL = 	[{"x":-gutter, "y":cy-arrH}, {"x":-gutter, "y":cy+arrH}, {"x":-gutter-arrW, "y":cy}];
+	
+	
+	this.handles.append("polygon")
+	    .attr("points",function(d) { 
+	        return _self.polyR.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow right");
+
+	this.handles.append("polygon")
+	    .attr("points",function(d) { 
+	        return _self.polyL.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow left");
+	
+	this.handles.attr("filter","url(#glow)");
 	
 	this.slices.append("svg:path")
 	            .attr("fill", function(d, i) { return null } ) //set the color for each slice to be chosen from the color function defined above
@@ -149,9 +192,8 @@ inPp.build = function(sel, _data, _icons){
 		
 		
 		//set up custom drag action
-		this.drag = d3.behavior.drag()
+	/*	this.drag = d3.behavior.drag()
 			.origin(null).on("dragstart", function(){
-				
 				initA = ev2point(d3.event).deg;
 				lastA = initA;
 				//console.log("initial Angle :: "+initA);
@@ -178,11 +220,47 @@ inPp.build = function(sel, _data, _icons){
 				lastA = point.deg;
 			}).on("dragend", function(){
 				_self.dragBody.classed("inactive", true);
-			})
+			}) */
 			//helper function for drag 
+			
+			this.drag = d3.behavior.drag()
+				.origin(null).on("dragstart", function(){
+					initA = ev2point(d3.event).deg;
+					lastA = initA;
+					console.log("dragstart");
+					//console.log("initial Angle :: "+initA);
+				})
+				.on("drag", function(d, i){
+					dData = _self.data;
+					var point = ev2point(d3.event);
+						_self.dragBody.attr({
+							transform: "translate("+(point.x-_self.dragProp.off)+" "+(point.y-_self.dragProp.off)+" ) rotate("+point.deg+" 50 50)"
+						})
+					delta = point.deg - lastA;
+					thisI = i;
+					//if(Math.abs(delta) < 10){
+					if(Math.abs(delta) < 10){  //threshold "jumpiness"
+						_self.startAngle =  _self.deg2rad(delta);
+						var isRight = (delta > 1) ? true : false;
+						console.log(d3.event);
+						//this.select(".right").classed("active", isRight);
+						//this.select(".left").classed("active", !isRight);
+						deltaPercentage = delta/3.6;
+						var lastI =  (thisI == 0 ) ? dData.length - 1 : thisI - 1;
+						console.log("dragging");
+						dData[i].weight += -deltaPercentage;
+						dData[lastI].weight += deltaPercentage;
+							
+						_self.dataset = dData;	//this is a setter, automatically re-draws
+					}
+					
+					lastA = point.deg;
+				}).on("dragend", function(){
+					_self.dragBody.classed("inactive", true);
+				})
 			//using d3 drag event, return a point and rad/deg rotation around the origin
 		var ev2point = function(ev){
-			console.log(ev);
+			//console.log(ev);
 
 			var pi = Math.PI;
 			res = {}
@@ -206,7 +284,7 @@ inPp.build = function(sel, _data, _icons){
 			return res;
 		}
 		
-		this.slices.call(this.drag);
+		this.handles.call(this.drag);
 
 }
 
@@ -215,13 +293,24 @@ inPp.update = function(){
 
 
 	_self = this;
-
+		this.pie.data = this.data;
 		this.slices    
 		    .data(this.pie(this.data)) //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
 		
 		this.slices.select("path")
-		            .attr("d", this.arc)   //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-					.transition().duration(100)
+		            .attr("d", this.arc) ;  //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+				//	.transition().duration(100)
+		
+		this.handles.data(this.pie(this.data));
+		
+		this.handles.attr(
+	    "transform", 
+		function(d,i){
+			var angle = +d.startAngle;
+			//console.log(angle);
+	        return "rotate("+_self.rad2deg(angle)+")"
+		})
+		
 					
 		this.slices.select(".icongroup")
 			.attr("transform", function(d) { //set the icon/label's origin to the center of the arc
@@ -239,14 +328,13 @@ inPp.update = function(){
 		var vals = "";
 		var weights = "";
 		this.data.forEach(function(d,i){
-			
 			var weightedValue = d.value * d.weight;
 			vals += d.value+",";
 			//console.log("weighted value :" +weightedValue);
 			weightedSum += weightedValue;
 		})
-		console.log("Weighted sum: "+weightedSum / 100);
-		console.log("values: "+vals);
+		//console.log("Weighted sum: "+weightedSum / 100);
+		//console.log("values: "+vals);
 		//console.log("sum :"+weightedSum);
 		var averageRate = weightedSum / 100;
 		//console.log("average rate :"+averageRate);
@@ -254,6 +342,7 @@ inPp.update = function(){
 			type: "RATE",
 			rate: averageRate.toFixed(2),
 		});
+		this.handles.call(this.drag);
 				
 
 }
