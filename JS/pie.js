@@ -15,6 +15,8 @@ var inPie = function( _w, _h) {
 	this.offset = {x: this.w/2, y:this.h/2}
 	this.textPad = 12;
 	this.sliceScale = this.r;
+	this.startAngle = 0;
+	this.offset.angle = 0;
 }
 inPp = inPie.prototype;
 
@@ -25,7 +27,14 @@ Object.defineProperty(inPp, "dataset",{
 		//console.log("DATASET RECEIVED");
 		this.update();
 		}});
+		
+inPp.rad2deg = function(rad){
+	return +rad*(180/Math.PI); 
+}
 
+inPp.deg2rad = function(deg){
+	return +deg*(Math.PI/180); 
+}
 
 
 inPp.build = function(sel, _data, _icons){
@@ -35,7 +44,7 @@ inPp.build = function(sel, _data, _icons){
 	
 	//div for visualization
 	this.vis = d3.select(sel)
-	    .append("svg:svg")
+	    .append("svg:svg").data([this.data])
 	        .attr("width", this.w)
 	        .attr("height", this.w)
 	
@@ -45,24 +54,66 @@ inPp.build = function(sel, _data, _icons){
 	       .attr("transform", "translate(" + this.offset.x + "," + this.offset.y + ")")    
 			.attr("class","pie")
 			_rad = this.r;
+	this.sliceGroup = this.svg.append("g");
 
 	//Helper to create paths from arc data
 	this.arc = d3.svg.arc()
-	    .outerRadius( this.r ).innerRadius(0);
+	    .outerRadius( this.r ).innerRadius(90);
 
 	
 
 		
 	this.pie = d3.layout.pie()           //this will create arc data for us given a list of values
 	    .value(function(d) { return d.weight; }).sort(null);    //we must tell it out to access the value of each element in our data array
+	
 
-	this.slices = this.svg.selectAll("g.slice")     
-		.data(this.pie(this.data))     //bind data to the pie layout            
+	this.slices = this.sliceGroup.selectAll("g.slice")     
+		.data(this.pie)     //bind data to the pie layout            
 		.enter()                          
 		.append("svg:g")                
 		.attr("class", "slice")
 	
 
+	
+	this.handles = this.svg.selectAll("g.handles").data(this.pie).enter().append("g");
+	this.handles.attr({
+	    "class":"handles",
+	    transform: function(d,i){
+			var angle = +d.startAngle;
+			//console.log(angle);
+	        return "rotate("+_self.rad2deg(angle)+")"
+	    }
+
+	}).append("line").attr({
+	    x1: 0, y1: 0,
+	    x2: 0, y2: -_self.r,
+	    "class": "handle bar"
+	});
+	
+
+	
+	var arrH = 12;
+	var arrW = 24;
+	var gutter = 2;
+	var cy = -(this.r-arrH);
+	
+	this.handles.append("circle").attr({
+		"cy": cy, r: 30, "class":"handleArea"
+	})
+	
+	this.polyR = 	[{"x":gutter, "y":cy-arrH}, {"x":gutter, "y":cy+arrH}, {"x":gutter+arrW, "y":cy}];
+	this.polyL = 	[{"x":-gutter, "y":cy-arrH}, {"x":-gutter, "y":cy+arrH}, {"x":-gutter-arrW, "y":cy}];
+	
+	
+	this.handles.append("polygon")
+	    .attr("points",function(d) { 
+	        return _self.polyR.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow right");
+
+	this.handles.append("polygon")
+	    .attr("points",function(d) { 
+	        return _self.polyL.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow left");
+	
+	this.handles.attr("filter","url(#glow)");
 	
 	this.slices.append("svg:path")
 	            .attr("fill", function(d, i) { return null } ) //set the color for each slice to be chosen from the color function defined above
@@ -103,7 +154,7 @@ inPp.build = function(sel, _data, _icons){
 			return - _self.scaleByWeight(d)/2;
 		},
 		"y":function(d){
-			return -_self.scaleByWeight(d)/2;
+			return -_self.scaleByWeight(d);
 		},
 		"transform":null,
 		"height":function( d){ return _self.scaleByWeight(d);},
@@ -113,22 +164,45 @@ inPp.build = function(sel, _data, _icons){
 		
 	});
 	
+	this.icongroup.each(function(d){d.rateMode = false})
+	var fOff = 50;
 	this.foreignBody = this.icongroup.append("foreignObject")
 		.attr({
+			"class": "foreignBody",
 			"width":function( d){ return _self.scaleByWeight(d) * 1.5;},
-			"height":"100px",
-			"x":function(d){ return -_self.scaleByWeight(d)/2 * 1.5},"y":function(d){ return _self.scaleByWeight(d)/2 },
+			"height":function(d){return _self.scaleByWeight(d)*3},
+			"x":function(d){ return -_self.scaleByWeight(d)/2 * 1.5},"y":function(d){ return -_self.scaleByWeight(d)-fOff },
 			"style":"color:white"
 		}).append("xhtml:body").attr("class","foreign");
 		
+		
+		this.rateLabel = this.foreignBody.append("div")                                     //add a label to each slice
+			.attr({
+				"class":"series rate inactive",
+			}).style({
+				height:"fOff"
+			}).append("h2").text(function(d, i) { 
+				var rate = +d.data.value;
+				rate = +rate;
+				rate = rate.toFixed(1);
+				return rate+"%";
+			}).style({
+				"font-size" : function(d,i){ return (_self.scaleByWeight(d)/(_self.data[i].value.length/1.5))+"px";}
+			});
+			
 		this.foreignBody.append("p")                                     //add a label to each slice
 			.attr({
-				"class":"series_label",
-			}).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
+				"class":"series label",
+			}).style("margin-top", function(d){ return _self.scaleByWeight(d) }).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
+			
 		this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
 			.attr({
-				"class":"series_weight",
+				"class":"series weight",
 			}).text(function(d, i) { return _self.data[i].weight.toFixed(0)+"%"; });        //get the label from our original data array  */
+			var initA;
+			var lastA;
+		
+		      //get the label from our original data array  */
 			var initA;
 			var lastA;
 			
@@ -138,51 +212,56 @@ inPp.build = function(sel, _data, _icons){
 			h:+100,
 			off: +50
 		}
-		this.dragBody = this.svg.append("foreignObject")
-			.attr({
-				"width":this.dragProp.w,
-				"height":this.dragProp.h,
-				"class": "dragBody inactive"
-			});
+
 			
-		this.dragBody.append("xhtml:body").attr("class","dragImg").append("img").attr("src","SVG/drag.svg")
-		
-		
-		//set up custom drag action
-		this.drag = d3.behavior.drag()
-			.origin(null).on("dragstart", function(){
+			this.drag = d3.behavior.drag()
+				.origin(null).on("dragstart", function(){
+					initA = ev2point(d3.event).deg;
+					lastA = initA;
+					//console.log("dragstart");
+					//console.log("initial Angle :: "+initA);
+				})
+				.on("drag", function(d, i){
+					dData = _self.data;
+					var point = ev2point(d3.event);
 				
-				initA = ev2point(d3.event).deg;
-				lastA = initA;
-				//console.log("initial Angle :: "+initA);
-			})
-			.on("drag", function(d, i){
-				_self.dragBody.classed("inactive", false);
-			
-				dData = _self.data;
-				var point = ev2point(d3.event);
-					_self.dragBody.attr({
-						//x: point.x-_self.dragProp.off,
-						//y: point.y-_self.dragProp.off,
-						transform: "translate("+(point.x-_self.dragProp.off)+" "+(point.y-_self.dragProp.off)+" ) rotate("+point.deg+" 50 50)"
-					})
-				delta = point.deg - lastA;
-				thisI = i;
-				if(Math.abs(delta) < 10){  //limit "jumpiness"
-					dData.forEach(function(e, ei){
-						check = (thisI == ei)
-						dData[ei].weight += (check) ? delta/3.6 : -delta/3.6; //update slice values
-					})
-				}
-				_self.dataset = dData;	//this is a setter, automatically re-draws
-				lastA = point.deg;
-			}).on("dragend", function(){
-				_self.dragBody.classed("inactive", true);
-			})
-			//helper function for drag 
+					delta = point.deg - lastA;
+					thisI = i;
+					//if(Math.abs(delta) < 10){
+					if(Math.abs(delta) < 10){  //threshold "jumpiness"
+						if(i == 0){ _self.offset.angle +=  _self.deg2rad(delta); }
+						
+						var isRight = (delta > 0) ? true : false;
+						//console.log(d3.event);
+
+
+						deltaPercentage = delta/3.6;
+						var lastI =  (thisI == 0 ) ? dData.length - 1 : thisI - 1;
+						//console.log("dragging");
+						dData[i].weight += -deltaPercentage;
+						dData[lastI].weight += deltaPercentage;
+							
+							
+						_self.handles.each(function(e,j){
+							if(thisI == j){
+								d3.select(this).selectAll(".arrow.right").classed("active", isRight);
+								d3.select(this).selectAll(".arrow.left").classed("active", !isRight);
+					
+								
+							}
+							
+						})	
+							
+						_self.dataset = dData;	//this is a setter, automatically re-draws
+					}
+					
+					lastA = point.deg;
+				}).on("dragend", function(){
+					d3.select(this).selectAll(".arrow").classed("active", false);
+				})
 			//using d3 drag event, return a point and rad/deg rotation around the origin
 		var ev2point = function(ev){
-			console.log(ev);
+			//console.log(ev);
 
 			var pi = Math.PI;
 			res = {}
@@ -206,7 +285,7 @@ inPp.build = function(sel, _data, _icons){
 			return res;
 		}
 		
-		this.slices.call(this.drag);
+		this.handles.call(this.drag);
 
 }
 
@@ -215,13 +294,33 @@ inPp.update = function(){
 
 
 	_self = this;
-
+		
 		this.slices    
-		    .data(this.pie(this.data)) //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
+		    .data(this.pie) //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
 		
 		this.slices.select("path")
-		            .attr("d", this.arc)   //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-					.transition().duration(100)
+		            .attr("d", this.arc);   //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+					
+		
+		this.handles.data(this.pie);
+		
+		
+		this.sliceGroup.attr(
+	    "transform", 
+		function(d,i){
+	        return "rotate("+_self.rad2deg( _self.offset.angle )+")"
+		})
+		
+
+			
+		this.handles.attr(
+	    "transform", 
+		function(d,i){
+			var angle = +d.startAngle + _self.offset.angle;
+			//console.log(angle);
+	        return "rotate("+_self.rad2deg( angle )+")"
+		})
+		
 					
 		this.slices.select(".icongroup")
 			.attr("transform", function(d) { //set the icon/label's origin to the center of the arc
@@ -229,24 +328,23 @@ inPp.update = function(){
 				d.outerRadius = r;
 				var _scale = d.data.weight/_self.initScale;
 				_scale = (_scale > 1) ? 1 : _scale;
-				return "translate(" + _self.arc.centroid(d) + ") scale("+_scale+","+_scale+")";        //this gives us a pair of coordinates like [50, 50]
+				return "translate(" + _self.arc.centroid(d) + ") scale("+_scale+","+_scale+") rotate("+ _self.rad2deg( -_self.offset.angle )+")";        //this gives us a pair of coordinates like [50, 50]
 	        })
 	
-		this.foreignBody.select("h2")  //update label for each foreignBody
+		this.foreignBody.select(".weight")  //update label for each foreignBody
 			.text(function(d, i) { return _self.data[i].weight.toFixed(2)+"%"; });        
 	
 		var weightedSum = 0;
 		var vals = "";
 		var weights = "";
 		this.data.forEach(function(d,i){
-			
 			var weightedValue = d.value * d.weight;
 			vals += d.value+",";
 			//console.log("weighted value :" +weightedValue);
 			weightedSum += weightedValue;
 		})
-		console.log("Weighted sum: "+weightedSum / 100);
-		console.log("values: "+vals);
+		//console.log("Weighted sum: "+weightedSum / 100);
+		//console.log("values: "+vals);
 		//console.log("sum :"+weightedSum);
 		var averageRate = weightedSum / 100;
 		//console.log("average rate :"+averageRate);
@@ -254,6 +352,14 @@ inPp.update = function(){
 			type: "RATE",
 			rate: averageRate.toFixed(2),
 		});
+		this.handles.call(this.drag);
 				
 
+}
+inPp.addClickHandlers = function(){
+	this.icongroup.on("click", function(d,i) {
+		d.rateMode = !d.rateMode;
+		$this = $(this);
+		$(this).find(".series").toggleClass("inactive");
+	});
 }

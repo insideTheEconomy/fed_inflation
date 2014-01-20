@@ -14,6 +14,24 @@
 	<link rel >
 </head>
 <body>
+	<svg height="0" width="0">
+	<defs>
+	    <filter id="glow" height="130%">
+	    <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blurred">
+	    </feGaussianBlur>
+	    <feComponentTransfer in1 = "blurred" result="colored">
+	        <feFuncR type="linear" slope="-1" intercept="1"></feFuncR>
+	        <feFuncG type="linear" slope="-1" intercept="1"></feFuncG>
+	        <feFuncB type="linear" slope="-1" intercept="1"></feFuncB>
+	        <feFuncA type="linear" slope="2"></feFuncA>
+	    </feComponentTransfer>
+	      <feMerge> 
+	        <feMergeNode in = "colored"></feMergeNode>
+	        <feMergeNode in="SourceGraphic"></feMergeNode> 
+	      </feMerge>
+	    </filter>
+	  </defs>
+	</svg>
 <p class = "debug"></p>
 <audio id = "click" style="display: none;" src="SND/worms.mp3"></audio>
 <div id="container">
@@ -22,19 +40,22 @@
 	<div class="col right">
 		<h1>WHAT'S YOUR INFLATION RATE?</h1>
 		<h2>What you buy can make your inflation rate different from the national rate.</h2>
-		<div class = "bin"><div class = "lab"><h2>Drag your 5 biggest monthly expenses here.</h2></div></div>
+		<div class = "bin"><div class = "lab"><h2>Drag your 5 biggest monthly expenses here.</h2></div><div class = "prompt inactive"><h3>Touch an Item to see its rate.</h3></div></div>
 	</div>	
 	<div class ="col calc">
-		<h1 class="heading phase2">HOW DO YOU SPEND YOUR MONEY?</h1><h2 class="body phase2">Adjust the size of each slice to approximate the amount you spend per month.</h2>
-		<h1 class="heading phase3 inactive">HOW DO YOU SPEND YOUR MONEY?</h1><h2 class="body phase3 inactive">Adjust the size of each slice to approximate the amount you spend per month.</h2>
+	
+			<h1 class="heading phase2">HOW DO YOU SPEND YOUR MONEY?</h1>
+			<h2 class="body phase2">Adjust the size of each slice to approximate the amount you spend per month.</h2>
+
 			<div class ="your rate inactive"><p>Your Inflation Rate</p><h1 class="live_rate "></h1></div>
 			<div class ="natl rate inactive"><p>National Inflation Rate</p><h1 class="static_rate ">2.7%</h1></div>
 		</div>
 
 </div>
-<div id ="footer"><div id ="button" class="phase1"><h3>NEXT</h3></div></div>
+<div id ="footer"><div id ="button" class="inactive phase1"><h3>NEXT</h3></div></div>
 <script>
 	$(init())
 </script>
+
 </body>
 </html>
