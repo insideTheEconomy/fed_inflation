@@ -60,16 +60,12 @@ p{
 			& > .right{
 				width: (@colThirds * 2 )- @pad /2;
 			}
-		& > .calc > h1{margin-left: -@colThirds  }
+		& > .calc > h1{margin-left: -200  }
 	}
 }
 
 @icIn : @gridStep - @pad;
-.foreign{text-align:center;
-	& p{
-		.iconlabel;
-	}
-}
+
 .tile{
 	
 	float: left;
@@ -112,7 +108,6 @@ p{
 	  */
 	-webkit-box-shadow: -2px 2px 4px black, inset 0 0 4px 2px white;
 	}
-
 }
 
 
@@ -130,7 +125,7 @@ p{
 	& h1{
 		font-size: 3.6em;
 		max-height: 3.6em;
-			text-align: center;
+			text-align: left;
 	}
 	& h2{
 	
@@ -197,6 +192,11 @@ p{
 .binBG(@start: lighten(@blue,10), @end: black){
 	background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 300, color-stop(0%, @start), color-stop(100%,  @end));
 }
+@binW3 : (@colThirds*2 )- @pad*2;
+@promptW : @binW / 2.5;
+@promptOffH: (@binW3 - @promptW)/2;
+@promptH: 4em;
+@promptOffV: (@binW3 - @promptH - 4em)/2;
 .bin{
 	-webkit-transition: all 1s;
 	width: @binW ;
@@ -212,6 +212,7 @@ p{
 		line-height: 1.5em;
 	}
 	& .lab{
+		pointer-events:none;
 		-webkit-transition: opacity @tranTime;
 		display: block;
 		position:absolute;
@@ -221,11 +222,38 @@ p{
 		padding : @binW /4;
 		padding-top: @binW / 3;
 		&.inactive{
+			width:0;
+			height:0;
+			
 			opacity: 0;
 			visibility: hidden;
 		}
 		
 	}
+
+	& .prompt{
+		pointer-events:none;
+		-webkit-transition: opacity @tranTime;
+		opacity: 1;
+		padding: .5em;
+		position:absolute;
+		background-color: @black;
+		z-index: 100;
+		text-align: center;
+		height:@promptH;
+		width: @promptW;
+		margin-left: @promptOffH;
+		margin-top: @promptOffV;
+		& h3{
+			font-size: 1.5em;
+			color: @lightblue;
+		}
+		&.inactive{
+			opacity: 0;
+			visibility: hidden;
+		}
+	}
+	
 	&.active{
 		-webkit-animation: pulse 1s ease-in-out infinite;
 		-animation: pulse 1s linear infinite;
@@ -234,34 +262,68 @@ p{
 		.binBG(lighten(@blue,20), darken(@blue,60));
 	}
 }
+.noClick{
+	pointer-events:none;
+}
+.noSelect{
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
 
-@binW3 : (@colThirds*2 )- @pad*2;
+h1,h2,p{
+	.noClick;
+	.noSelect;
+}
+
 .bin.phase2{
 	width: @binW3 ;
 	height: @binW3 ;
 	margin: @pad/2;
 	margin-top: @pad;
 	border-radius:	@binW3 /2 ;
+	z-index:50;
 	
 }
 
 #footer{
 	width:@bodyWidth;
-	height: @bodyHeight / 6;
+	height: @bodyHeight / 12;
 	position: absolute;
-	top: (@bodyHeight / 6) * 5;
+	top: (@bodyHeight / 12) * 11;
 	padding-right: 3em;
-	& h3{
+
+	& #button{
+		width:25%;
+		height:100%;
 		float:right;
+		&.inactive{
+			opacity: 0;
+			.noClick;
+		}
+	}
+	& h3{
+		text-align: center;
+		width: auto;
 		color: @lightblue;
 		font-size: 4em;
 		line-height: 1em;
 		margin: .25em;
+		margin-top: -@bodyHeight/12;
 		padding: .25em;
 		border-radius: .25em;
-		pointer-events: ;
 		background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 100, color-stop(0%, rgb(16, 6, 255)), color-stop(100%, black));
 		-webkit-box-shadow: inset 0 0 5px 1px white, inset 0 0 2px 1px white, inset 0 0 1px 1px white, 0 -2px 10px 5px @lightblue;
+	}
+}
+
+.phase2{
+	 transition: -webkit-transform .25s ease-out;
+	&.inactive{
+		-webkit-transform: rotate(90);
 	}
 }
 
@@ -315,7 +377,10 @@ p{
 		stroke: @blue;
 		stroke-width: 1;
 		&.active{
-			fill:green;
+			fill:@green;
+			stroke:@lightblue;
+			stroke-width: 2;
+			
 		}
 	}
 	fill: @lightblue;
@@ -323,5 +388,48 @@ p{
 	
 }
 
+.handleArea{
+	fill: red;
+	fill-opacity: 0;
+	stroke: none;
+}
+
+//icongroup
+.series.rate{
+	padding: 12px;
+	width: auto;
+	& h2{
+		width:90%;
+		margin:auto;
+		line-height: 1em;
+		color: white;
+		text-shadow: 0 0 3px black, 0 0 5px @lightblue, ;
+			background-color: @black;
+			-webkit-box-shadow: 0 0 2px 2px @lightblue, 0 2px 14px 2px @lightblue;
+			border-radius: 1em;
+			padding:.125em;
+			z-index:199;
+			
+	}
+	
+}
+
+.series{
+
+	opacity: 1;
+	&.inactive{
+		opacity: 0;
+	}
+}
+.foreign{text-align:center;
+	& p{
+		
+		.iconlabel;
+		margin-top: .125em;
+	}
+}
+body.foreign{
+	height:auto;
+}
 
 

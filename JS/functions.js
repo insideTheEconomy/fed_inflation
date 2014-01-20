@@ -56,7 +56,7 @@ var makePie = function(){
 	binW = $(".bin").width();
 	p = new inPie(binW, binW);
 	p.build(".bin", selected, icons);
-	
+	$("#button").toggleClass("noclick");
 	$(document).on("RATE", function(e){
 			var rate = e.rate;
 			$(".live_rate").text(rate).parent().toggleClass("inactive",false).redraw();
@@ -64,6 +64,7 @@ var makePie = function(){
 }
 
 var phase2Transition = function(){
+	$("#button").toggleClass("noclick");
 	getTileData();
 	$tiles = $(".tile:not(.inBin)");
 	numtiles = $tiles.length;
@@ -88,6 +89,7 @@ var phase2Transition = function(){
 		setTimeout(makePie, 1000);
 	});
 	
+	
 	$(".right").find("h1, h2").delay(delayDuration/2).queue(function(n){
 		$(this).addClass("inactive")
 		$selected.each(function(i, o){
@@ -104,9 +106,11 @@ var phase2Transition = function(){
 var phase3Transition = function(){
 	var heading ="HOW DOES YOUR RATE COMPARE?"
 	var body = "You might be spending money on things that have a different inflation rate from the national rate."
-		$(".heading").text(heading);
-		$(".body").text(body);
-		
+		$(".phase2.heading").text(heading).redraw();
+		$(".phase2.body").text(body).redraw();
+		$(".natl.rate, .lab").removeClass("inactive");
+		$(".prompt").removeClass("inactive");
+		p.addClickHandlers();
 	
 
 }
@@ -126,9 +130,9 @@ var drawIcons = function (){
 		//console.log(fileString);
 		
 		d3.xml(fileString, "image/svg+xml", function(_doc){
-			console.log(_doc)
+			//console.log(_doc)
 			node = document.importNode(_doc.documentElement, true);
-			console.log($(node));
+			//console.log($(node));
 			$(node).find("path, circle, polygon, line").attr("fill","#A4DBE8");
 			icons[d.ser_id] = node;
 			document.getElementById(d.ser_id).appendChild(node);
@@ -168,6 +172,13 @@ var drawIcons = function (){
 		hoverClass : "drop-hover",
 		tolerance: "fit",
 		drop : function(e,ui){
+			if ($(".inBin").length >= 5){
+				alert("You've already got 5 items, you'll need to remove one to add any more.");
+				return false;
+			}else{
+				var hasItems = ($(".inBin").length > 0);
+				$("#button").toggleClass("inactive", !hasItems);
+			}
 			ui.draggable.toggleClass("inBin", true);
 			$(".lab").toggleClass("inactive", true);
 		}
@@ -181,7 +192,7 @@ var drawIcons = function (){
 			ui.draggable.toggleClass("inBin", false)
 		}
 	})
-	console.log("woot")
+	//console.log("woot")
 };
 
 
