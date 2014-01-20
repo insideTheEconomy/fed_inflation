@@ -31,6 +31,11 @@ var init = function(){
 		$(this).find("h3").text("RESET");
 		phase3Transition();
 	});
+	$("#footer").on("click", "#button.phase3", function(){
+		location.reload();
+	});
+	
+	
 
 	
 	

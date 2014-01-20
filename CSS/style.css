@@ -260,6 +260,8 @@ p {
   padding-right: 3em;
 }
 #footer #button {
+  -webkit-transition: opacity 1s;
+  opacity: 1;
   width: 25%;
   height: 100%;
   float: right;
@@ -350,11 +352,13 @@ p {
   stroke: none;
 }
 .series.rate {
-  padding: 12px;
+  padding: 20%;
+  padding-top: 10%;
   width: auto;
 }
 .series.rate h2 {
-  width: 90%;
+  font-size: 1em;
+  width: auto;
   margin: auto;
   line-height: 1em;
   color: white;

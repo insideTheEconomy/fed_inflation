@@ -297,6 +297,8 @@ h1,h2,p{
 	padding-right: 3em;
 
 	& #button{
+		-webkit-transition: opacity 1s;
+		opacity:1;
 		width:25%;
 		height:100%;
 		float:right;
@@ -396,11 +398,15 @@ h1,h2,p{
 
 //icongroup
 .series.rate{
-	padding: 12px;
+	
+	padding: 20%;
+	padding-top:10%;
 	width: auto;
 	& h2{
-		width:90%;
+		font-size:1em;
+		width:auto;
 		margin:auto;
+		padding:.125em;
 		line-height: 1em;
 		color: white;
 		text-shadow: 0 0 3px black, 0 0 5px @lightblue, ;
@@ -415,7 +421,6 @@ h1,h2,p{
 }
 
 .series{
-
 	opacity: 1;
 	&.inactive{
 		opacity: 0;

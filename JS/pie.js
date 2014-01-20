@@ -170,7 +170,7 @@ inPp.build = function(sel, _data, _icons){
 		.attr({
 			"class": "foreignBody",
 			"width":function( d){ return _self.scaleByWeight(d) * 1.5;},
-			"height":"260px",
+			"height":function(d){return _self.scaleByWeight(d)*3},
 			"x":function(d){ return -_self.scaleByWeight(d)/2 * 1.5},"y":function(d){ return -_self.scaleByWeight(d)-fOff },
 			"style":"color:white"
 		}).append("xhtml:body").attr("class","foreign");
@@ -179,11 +179,15 @@ inPp.build = function(sel, _data, _icons){
 		this.rateLabel = this.foreignBody.append("div")                                     //add a label to each slice
 			.attr({
 				"class":"series rate inactive",
-				"style": function(d){ return "height: "+fOff }
+			}).style({
+				height:"fOff"
 			}).append("h2").text(function(d, i) { 
-				console.log("series_rate");
-				console.log(d);
-				return d.data.value+"%";
+				var rate = +d.data.value;
+				rate = +rate;
+				rate = rate.toFixed(1);
+				return rate+"%";
+			}).style({
+				"font-size" : function(d,i){ return (_self.scaleByWeight(d)/(_self.data[i].value.length/1.5))+"px";}
 			});
 			
 		this.foreignBody.append("p")                                     //add a label to each slice
