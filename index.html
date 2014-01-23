@@ -13,7 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="CSS/style.css">
 	<link rel >
 </head>
-<body>
+<body class="main">
 	<svg height="0" width="0">
 	<defs>
 	    <filter id="glow" height="130%">
@@ -34,7 +34,7 @@
 	</svg>
 <p class = "debug"></p>
 <audio id = "click" style="display: none;" src="SND/worms.mp3"></audio>
-<div id="container">
+<div id="container" class="loading">
 	
 	<div class="col left"></div>
 	<div class="col right">
@@ -54,7 +54,13 @@
 </div>
 <div id ="footer"><div id ="button" class="inactive phase1"><h3>NEXT</h3></div></div>
 <script>
-	$(init())
+	
+
+	$(window).load(
+		init()
+	     
+	);
+	
 </script>
 
 </body>

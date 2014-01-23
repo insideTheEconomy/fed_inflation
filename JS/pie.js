@@ -17,6 +17,8 @@ var inPie = function( _w, _h) {
 	this.sliceScale = this.r;
 	this.startAngle = 0;
 	this.offset.angle = 0;
+	this.segProp = {r: this.r-12}
+	
 }
 inPp = inPie.prototype;
 
@@ -38,9 +40,10 @@ inPp.deg2rad = function(deg){
 
 
 inPp.build = function(sel, _data, _icons){
+	var _self  = this;
 	this.icons = _icons;
 	this.data = _data;
-	var	_self = this;
+
 	
 	//div for visualization
 	this.vis = d3.select(sel)
@@ -75,144 +78,23 @@ inPp.build = function(sel, _data, _icons){
 	
 
 	
-	this.handles = this.svg.selectAll("g.handles").data(this.pie).enter().append("g");
-	this.handles.attr({
-	    "class":"handles",
-	    transform: function(d,i){
-			var angle = +d.startAngle;
-			//console.log(angle);
-	        return "rotate("+_self.rad2deg(angle)+")"
-	    }
-
-	}).append("line").attr({
-	    x1: 0, y1: 0,
-	    x2: 0, y2: -_self.r,
-	    "class": "handle bar"
-	});
-	
-
-	
-	var arrH = 12;
-	var arrW = 24;
-	var gutter = 2;
-	var cy = -(this.r-arrH);
-	
-	this.handles.append("circle").attr({
-		"cy": cy, r: 30, "class":"handleArea"
-	})
-	
-	this.polyR = 	[{"x":gutter, "y":cy-arrH}, {"x":gutter, "y":cy+arrH}, {"x":gutter+arrW, "y":cy}];
-	this.polyL = 	[{"x":-gutter, "y":cy-arrH}, {"x":-gutter, "y":cy+arrH}, {"x":-gutter-arrW, "y":cy}];
 	
 	
-	this.handles.append("polygon")
-	    .attr("points",function(d) { 
-	        return _self.polyR.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow right");
-
-	this.handles.append("polygon")
-	    .attr("points",function(d) { 
-	        return _self.polyL.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow left");
-	
-	this.handles.attr("filter","url(#glow)");
-	
-	this.slices.append("svg:path")
+/*	this.slices.append("svg:path")
 	            .attr("fill", function(d, i) { return null } ) //set the color for each slice to be chosen from the color function defined above
 	            .style("fill-opacity","0")	
-				.attr("d", this.arc)                                    //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-
-	this.icongroup = this.slices.append("g").attr("class","icongroup").attr("id", function(d){return d.data.ser_id })   
-		.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
-	            //we have to make sure to set these before calling arc.centroid
-	            d.innerRadius = 0;
-	            d.outerRadius = r;
-	            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
-	        })
-	
-	this.scaleByWeight = function(d){
-		var scale = +d.data.weight;
-		scale /= 100;
-		scale *= _self.sliceScale;
-		return scale;
-	}
-
-	this.slices.each(function(d){
-		var changeType = function ( elem ){
-			var nElem = document.createElement("g");
-			elem = elem.cloneNode(true);
-			while (elem.firstChild){
-				nElem.appendChild(elem.firstChild);
-			}
-			return nElem;
-		}
-						_self.initScale = d.data.weight;
-					
-						document.getElementById(d.data.ser_id).appendChild( _self.icons[d.data.ser_id] );		
-	});
-
-	this.icongroup.select("svg").attr({
-		"x":function(d){
-			return - _self.scaleByWeight(d)/2;
-		},
-		"y":function(d){
-			return -_self.scaleByWeight(d);
-		},
-		"transform":null,
-		"height":function( d){ return _self.scaleByWeight(d);},
-		"width":function( d){ return _self.scaleByWeight(d);},
-		"style":null,
-		"version":null
-		
-	});
-	
-	this.icongroup.each(function(d){d.rateMode = false})
-	var fOff = 50;
-	this.foreignBody = this.icongroup.append("foreignObject")
-		.attr({
-			"class": "foreignBody",
-			"width":function( d){ return _self.scaleByWeight(d) * 1.5;},
-			"height":function(d){return _self.scaleByWeight(d)*3},
-			"x":function(d){ return -_self.scaleByWeight(d)/2 * 1.5},"y":function(d){ return -_self.scaleByWeight(d)-fOff },
-			"style":"color:white"
-		}).append("xhtml:body").attr("class","foreign");
-		
-		
-		this.rateLabel = this.foreignBody.append("div")                                     //add a label to each slice
-			.attr({
-				"class":"series rate inactive",
-			}).style({
-				height:"fOff"
-			}).append("h2").text(function(d, i) { 
-				var rate = +d.data.value;
-				rate = +rate;
-				rate = rate.toFixed(1);
-				return rate+"%";
-			}).style({
-				"font-size" : function(d,i){ return (_self.scaleByWeight(d)/(_self.data[i].value.length/1.5))+"px";}
-			});
-			
-		this.foreignBody.append("p")                                     //add a label to each slice
-			.attr({
-				"class":"series label",
-			}).style("margin-top", function(d){ return _self.scaleByWeight(d) }).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
-			
-		this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
-			.attr({
-				"class":"series weight",
-			}).text(function(d, i) { return _self.data[i].weight.toFixed(0)+"%"; });        //get the label from our original data array  */
-			var initA;
-			var lastA;
-		
-		      //get the label from our original data array  */
-			var initA;
-			var lastA;
-			
+				.attr("d", this.arc)     */                               //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+	this.buildLabels();
+	this.buildIcongroups();
+	this.buildHandles();		
 		//drag icon
 		this.dragProp = {
 			w:+100,
 			h:+100,
 			off: +50
 		}
-
+			var initA;
+			var lastA;
 			
 			this.drag = d3.behavior.drag()
 				.origin(null).on("dragstart", function(){
@@ -290,29 +172,24 @@ inPp.build = function(sel, _data, _icons){
 }
 
 inPp.update = function(){
+	var _self  = this;
 	var _maxScale = 2;
-
-
-	_self = this;
-		
 		this.slices    
 		    .data(this.pie) //associate the generated pie data (an array of arcs, each having startAngle, endAngle and value properties) 
 		
-		this.slices.select("path")
-		            .attr("d", this.arc);   //this creates the actual SVG path using the associated data (pie) with the arc drawing function
-					
+	this.updateSegs();
+	
 		
+	/*	this.slices.select("path")
+		            .attr("d", this.arc);   //this creates the actual SVG path using the associated data (pie) with the arc drawing function*/
 		this.handles.data(this.pie);
-		
-		
+		this.perc.data(this.pie);
 		this.sliceGroup.attr(
 	    "transform", 
 		function(d,i){
 	        return "rotate("+_self.rad2deg( _self.offset.angle )+")"
 		})
 		
-
-			
 		this.handles.attr(
 	    "transform", 
 		function(d,i){
@@ -321,6 +198,20 @@ inPp.update = function(){
 	        return "rotate("+_self.rad2deg( angle )+")"
 		})
 		
+		this.perc.attr({
+			transform: function(d,i){
+				_c = (d.endAngle - d.startAngle);
+				console.log("_c: "+_c);
+				var angle = d.startAngle + (_c/2);
+				console.log("angle "+angle);
+				//console.log(angle);
+		        return "rotate("+_self.rad2deg(angle)+") translate( 0 "+(-_self.r+24)+")"
+		    }
+		})
+		
+		this.perc.selectAll(".percentage").text(function(d){
+				return d.data.weight.toFixed(1)+"%";
+		})
 					
 		this.slices.select(".icongroup")
 			.attr("transform", function(d) { //set the icon/label's origin to the center of the arc
@@ -352,14 +243,221 @@ inPp.update = function(){
 			type: "RATE",
 			rate: averageRate.toFixed(2),
 		});
-		this.handles.call(this.drag);
+	
 				
-
+	
 }
+
+inPp.buildHandles = function(){
+	var _self  = this;
+	this.handles = this.svg.selectAll("g.handles").data(this.pie).enter().append("g");
+	this.handles.attr({
+	    "class":"handles",
+	    transform: function(d,i){
+			var angle = +d.startAngle;
+			//console.log(angle);
+	        return "rotate("+_self.rad2deg(angle)+")"
+	    }
+
+	}).append("line").attr({
+	    x1: 0, y1: 0,
+	    x2: 0, y2: -_self.r,
+	    "class": "handle bar"
+	});
+	
+
+	
+	var arrH = 12;
+	var arrW = 24;
+	var gutter = 2;
+	var cy = -(this.r-arrH);
+	
+	this.handles.append("circle").attr({
+		"cy": cy, r: 30, "class":"handleArea"
+	})
+	
+	this.polyR = 	[{"x":gutter, "y":cy-arrH}, {"x":gutter, "y":cy+arrH}, {"x":gutter+arrW, "y":cy}];
+	this.polyL = 	[{"x":-gutter, "y":cy-arrH}, {"x":-gutter, "y":cy+arrH}, {"x":-gutter-arrW, "y":cy}];
+	
+	
+	this.handles.append("polygon")
+	    .attr("points",function(d) { 
+	        return _self.polyR.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow right");
+
+	this.handles.append("polygon")
+	    .attr("points",function(d) { 
+	        return _self.polyL.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow left");
+	
+	this.handles.attr("filter","url(#glow)");
+	this.buildSegs();
+}
+
+
+
+inPp.buildLabels = function(){
+	var _self  = this;
+	this.perc = this.svg.selectAll("g.perc").data(this.pie).enter().append("g");
+	this.perc.attr({
+	    "class":"perc",
+	    transform: function(d,i){
+			_c = (d.endAngle - d.startAngle);
+			console.log("_c: "+_c);
+			var angle = d.startAngle + (_c/2);
+			console.log("angle "+angle);
+			//console.log(angle);
+	        return "rotate("+_self.rad2deg(angle)+") translate( 0 "+(-_self.r+24)+")"
+	    }
+
+	}).append("text").attr("class","percentage").attr("text-anchor","middle").text(function(d){
+			return d.data.weight.toFixed(1)+"%";
+	}).attr("transform",function(d){
+		check = ((_self.rad2deg(d.startAngle)+90)%360 >= 180)
+		_ro = (check) ? 180 : 0;
+		_off = (check) ? 18 : 0;
+		return "rotate("+_ro+") translate( 0 "+_off+")"
+	});
+	
+}
+
+
+
+inPp.buildIcongroups = function(){
+	_self = this;
+	this.icongroup = this.slices.append("g").attr("class","icongroup").attr("id", function(d){return d.data.ser_id })   
+		.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
+	            //we have to make sure to set these before calling arc.centroid
+	            d.innerRadius = 0;
+	            d.outerRadius = r;
+	            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
+	        })
+
+	
+	var icnW = 100;
+	var icnH = 100;
+	
+	var bodyW = icnW*1.5;
+	var bodyH = icnW*2;
+	
+	var icnCX = icnW/2;
+	var icnCY = icnH/2;
+	
+	var bodyCX = bodyW/2;
+	
+	var vOff = 30;
+	var fOff = 40;
+	var labelPad = 4;
+	this.slices.each(function(d){
+		
+		_self.initScale = d.data.weight;
+		document.getElementById(d.data.ser_id).appendChild( _self.icons[d.data.ser_id] );		
+	});
+	
+	
+	this.icongroup.select("svg").attr({ //svg contains icon path vector
+		"x":-icnCX,
+		"y":-icnCY-vOff,
+		"transform":null,
+		"height":icnW,
+		"width":icnH,
+		"style":null,
+		"version":null
+	}).append("rect").attr({
+		width: icnW, height: icnH, fill:"#ffee00", "class":"handleArea"
+	});
+	
+	this.icongroup.each(function(d){d.rateMode = false});
+	
+	
+	this.foreignBody = this.icongroup.append("foreignObject")
+		.attr({
+			"class": "foreignBody",
+			"width":bodyW,
+			"height":bodyH,
+			"x":-bodyCX,
+			"y":-(icnCY+fOff+vOff),
+			"style":"color:white"
+		}).append("xhtml:body").attr("class","foreign");
+		
+		
+		this.rateLabel = this.foreignBody.append("div")                                     //add a label to each slice
+			.attr({
+				"class":"series rate inactive",
+			}).style({
+				height:fOff
+			}).append("h2").text(function(d, i) { 
+				var rate = +d.data.value;
+				rate = +rate;
+				rate = rate.toFixed(1);
+				return rate+"%";
+			})
+			
+		this.foreignBody.append("p")                                     //add a label to each slice
+			.attr({
+				"class":"series label active",
+			}).style("margin-top", icnH+labelPad).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
+			
+		this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
+			.attr({
+				"class":"series weight active",
+			}).text(function(d, i) { return d.data.weight.toFixed(0)+"%"; });        //get the label from our original data array  */
+		
+		
+		      //get the label from our original data array  */
+		
+}
+
+
+inPp.calcSegs = function(){
+	this.slices.each(function(d){
+		_pad = _self.deg2rad(6);
+	    _start = d.startAngle+_pad;
+	    _end = d.endAngle-_pad;
+	    _size = _end-_start;
+	    _steps = Math.floor(_self.rad2deg(_size)/2);
+	    _step = (_end-_start)/_steps;
+	    var _d = d3.range(_steps+1).map(function(i){
+	        return (i*_step)+_start
+	    })
+	    d.angles=_d;
+	    //console.log(d);
+	})
+}
+
+inPp.buildSegs = function(){
+	this.calcSegs();
+	this.segLine = d3.svg.line.radial()
+	    .interpolate("cardinal")
+	    .radius(this.segProp.r)
+	    .angle(function(d, i) { return d });
+
+	this.segs = this.slices
+	    .append("g").attr("class","segments");
+	this.segs.datum(function(d){return d.angles});
+
+	this.segs.append("path").attr("class", "seg").attr("d", this.segLine).attr("stroke-dasharray","5,5");
+}
+
+inPp.updateSegs = function(){
+		this.calcSegs();
+		
+		_segs = this.slices
+		    .select(".segments").attr("class","segments").datum(function(d){return d.angles});
+
+		_segs.select(".seg").attr("d", this.segLine).attr("stroke-dasharray","5,5");
+	
+}
+
 inPp.addClickHandlers = function(){
 	this.icongroup.on("click", function(d,i) {
 		d.rateMode = !d.rateMode;
 		$this = $(this);
-		$(this).find(".series").toggleClass("inactive");
+		$(this).find(".series.inactive").toggleClass("inactive");
 	});
 }
+
+
+
+
+
+
+
