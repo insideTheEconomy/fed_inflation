@@ -110,13 +110,15 @@ inPp.build = function(sel, _data, _icons){
 					delta = point.deg - lastA;
 					thisI = i;
 					//if(Math.abs(delta) < 10){
-					if(Math.abs(delta) < 10){  //threshold "jumpiness"
+					var jumpy = Math.abs(delta) < 10;
+	
+					
+					if(jumpy){  //threshold "jumpiness"
 						if(i == 0){ _self.offset.angle +=  _self.deg2rad(delta); }
 						
 						var isRight = (delta > 0) ? true : false;
+						if (d.data.weight <= 6 && isRight) return false;
 						//console.log(d3.event);
-
-
 						deltaPercentage = delta/3.6;
 						var lastI =  (thisI == 0 ) ? dData.length - 1 : thisI - 1;
 						//console.log("dragging");
@@ -128,8 +130,6 @@ inPp.build = function(sel, _data, _icons){
 							if(thisI == j){
 								d3.select(this).selectAll(".arrow.right").classed("active", isRight);
 								d3.select(this).selectAll(".arrow.left").classed("active", !isRight);
-					
-								
 							}
 							
 						})	
@@ -339,16 +339,17 @@ inPp.buildIcongroups = function(){
 	var icnH = 100;
 	
 	var bodyW = icnW*1.5;
-	var bodyH = icnW*2;
+	var bodyH = icnH*1.5;
 	
 	var icnCX = icnW/2;
 	var icnCY = icnH/2;
 	
 	var bodyCX = bodyW/2;
-	
+	var bodyCY = bodyH/2;
 	var vOff = 25;
-	var fOff = 40;
+	var fOff = 0;
 	var labelPad = 4;
+	
 	this.slices.each(function(d){
 		
 		_self.initScale = d.data.weight;
@@ -377,16 +378,16 @@ inPp.buildIcongroups = function(){
 			"width":bodyW,
 			"height":bodyH,
 			"x":-bodyCX,
-			"y":-(icnCY+fOff+vOff),
+			"y":-bodyCY,
 			"style":"color:white"
 		}).append("xhtml:body").attr("class","foreign");
 		
 		
 		this.rateLabel = this.foreignBody.append("div")                                     //add a label to each slice
 			.attr({
-				"class":"series rate inactive",
+				"class":"series rate",
 			}).style({
-				height:fOff
+				height:icnH
 			}).append("h2").text(function(d, i) { 
 				var rate = +d.data.value;
 				rate = +rate;
@@ -397,7 +398,7 @@ inPp.buildIcongroups = function(){
 		this.foreignBody.append("p")                                     //add a label to each slice
 			.attr({
 				"class":"series label active",
-			}).style("margin-top", icnH+labelPad).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
+			}).style("margin-top", +labelPad).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
 			
 	/*	this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
 			.attr({
@@ -451,10 +452,12 @@ inPp.updateSegs = function(){
 }
 
 inPp.addClickHandlers = function(){
+	console.log("adding click handlers");
 	this.icongroup.on("click", function(d,i) {
+		console.log("Click!");
 		d.rateMode = !d.rateMode;
 		$this = $(this);
-		$(this).find(".series.inactive").toggleClass("inactive");
+		$this.find(".series.rate").toggleClass("inactive");
 	});
 }
 
