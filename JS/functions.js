@@ -1,7 +1,8 @@
 var data;
 var container;
 var node;
-var svg
+var svg;
+var resetContent;
 $.fn.redraw = function(){
   $(this).each(function(){
     var redraw = this.offsetHeight;
@@ -32,8 +33,12 @@ var init = function(){
 		phase3Transition();
 	});
 	$("#footer").on("click", "#button.phase3", function(){
+		$("#container").addClass("loading");
 		location.reload();
 	});
+	
+
+
 	
 	
 
@@ -197,7 +202,8 @@ var drawIcons = function (){
 			ui.draggable.toggleClass("inBin", false)
 		}
 	})
-	//console.log("woot")
+	 $("#container").removeClass("loading");
+
 };
 
 
