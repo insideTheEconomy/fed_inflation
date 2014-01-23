@@ -281,6 +281,12 @@ p {
   pointer-events: none;
 }
 #footer h3 {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   text-align: center;
   width: auto;
   color: #a4dbe8;
@@ -411,4 +417,14 @@ body.foreign {
   fill: #a4dbe8;
   stroke: none;
   font-size: 24px;
+}
+.series.rate {
+  padding-top: 25%;
+  pointer-events: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
