@@ -18,7 +18,7 @@ var inPie = function( _w, _h) {
 	this.startAngle = 0;
 	this.offset.angle = 0;
 	this.segProp = {r: this.r-12}
-	
+	this.precision = 1;
 }
 inPp = inPie.prototype;
 
@@ -202,7 +202,7 @@ inPp.update = function(){
 			transform: function(d,i){
 				_c = (d.endAngle - d.startAngle);
 				console.log("_c: "+_c);
-				var angle = d.startAngle + (_c/2);
+				var angle = d.startAngle + (_c/2) + _self.offset.angle;
 				console.log("angle "+angle);
 				//console.log(angle);
 		        return "rotate("+_self.rad2deg(angle)+") translate( 0 "+(-_self.r+24)+")"
@@ -210,7 +210,7 @@ inPp.update = function(){
 		})
 		
 		this.perc.selectAll(".percentage").text(function(d){
-				return d.data.weight.toFixed(1)+"%";
+				return d.data.weight.toFixed(_self.precision)+"%";
 		})
 					
 		this.slices.select(".icongroup")
@@ -218,12 +218,12 @@ inPp.update = function(){
 				d.innerRadius = 0;
 				d.outerRadius = r;
 				var _scale = d.data.weight/_self.initScale;
-				_scale = (_scale > 1) ? 1 : _scale;
+				_scale = (_scale > 1) ? 1 : (_scale < 0.5 )? 0.5 : _scale;
 				return "translate(" + _self.arc.centroid(d) + ") scale("+_scale+","+_scale+") rotate("+ _self.rad2deg( -_self.offset.angle )+")";        //this gives us a pair of coordinates like [50, 50]
 	        })
 	
 		this.foreignBody.select(".weight")  //update label for each foreignBody
-			.text(function(d, i) { return _self.data[i].weight.toFixed(2)+"%"; });        
+			.text(function(d, i) { return _self.data[i].weight.toFixed(_self.precision)+"%"; });        
 	
 		var weightedSum = 0;
 		var vals = "";
@@ -241,7 +241,7 @@ inPp.update = function(){
 		//console.log("average rate :"+averageRate);
 		$.event.trigger({
 			type: "RATE",
-			rate: averageRate.toFixed(2),
+			rate: averageRate.toFixed(_self.precision),
 		});
 	
 				
@@ -288,7 +288,7 @@ inPp.buildHandles = function(){
 	    .attr("points",function(d) { 
 	        return _self.polyL.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow left");
 	
-	this.handles.attr("filter","url(#glow)");
+	this.handles.attr("filter","url(#glowie)");
 	this.buildSegs();
 }
 
@@ -301,17 +301,20 @@ inPp.buildLabels = function(){
 	    "class":"perc",
 	    transform: function(d,i){
 			_c = (d.endAngle - d.startAngle);
+		
 			console.log("_c: "+_c);
 			var angle = d.startAngle + (_c/2);
+				d.midAngle = angle;
 			console.log("angle "+angle);
 			//console.log(angle);
 	        return "rotate("+_self.rad2deg(angle)+") translate( 0 "+(-_self.r+24)+")"
 	    }
 
 	}).append("text").attr("class","percentage").attr("text-anchor","middle").text(function(d){
-			return d.data.weight.toFixed(1)+"%";
+			return d.data.weight.toFixed(_self.precision)+"%";
 	}).attr("transform",function(d){
-		check = ((_self.rad2deg(d.startAngle)+90)%360 >= 180)
+		_c = (d.endAngle - d.startAngle);
+		check = ((_self.rad2deg(d.midAngle)+90)%360 >= 180)
 		_ro = (check) ? 180 : 0;
 		_off = (check) ? 18 : 0;
 		return "rotate("+_ro+") translate( 0 "+_off+")"
@@ -343,7 +346,7 @@ inPp.buildIcongroups = function(){
 	
 	var bodyCX = bodyW/2;
 	
-	var vOff = 30;
+	var vOff = 25;
 	var fOff = 40;
 	var labelPad = 4;
 	this.slices.each(function(d){
@@ -387,7 +390,7 @@ inPp.buildIcongroups = function(){
 			}).append("h2").text(function(d, i) { 
 				var rate = +d.data.value;
 				rate = +rate;
-				rate = rate.toFixed(1);
+				rate = rate.toFixed(_self.precision);
 				return rate+"%";
 			})
 			
@@ -396,10 +399,10 @@ inPp.buildIcongroups = function(){
 				"class":"series label active",
 			}).style("margin-top", icnH+labelPad).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
 			
-		this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
+	/*	this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
 			.attr({
 				"class":"series weight active",
-			}).text(function(d, i) { return d.data.weight.toFixed(0)+"%"; });        //get the label from our original data array  */
+			}).text(function(d, i) { return d.data.weight.toFixed(_self.precision)+"%"; });        //get the label from our original data array  */
 		
 		
 		      //get the label from our original data array  */
