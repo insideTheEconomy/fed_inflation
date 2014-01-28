@@ -98,43 +98,52 @@ inPp.build = function(sel, _data, _icons){
 			
 			this.drag = d3.behavior.drag()
 				.origin(null).on("dragstart", function(){
-					initA = ev2point(d3.event).deg;
+					//init angle is based on startAngle of handle
+					initA = _self.rad2deg(d.startAngle);
 					lastA = initA;
-					//console.log("dragstart");
-					//console.log("initial Angle :: "+initA);
 				})
 				.on("drag", function(d, i){
+					
 					dData = _self.data;
+					//point representing current mouse position
 					var point = ev2point(d3.event);
-				
+					//change in rotation(in degrees)
 					delta = point.deg - lastA;
 					thisI = i;
 					//if(Math.abs(delta) < 10){
 					var jumpy = Math.abs(delta) < 10;
-	
-					
 					if(jumpy){  //threshold "jumpiness"
-						if(i == 0){ _self.offset.angle +=  _self.deg2rad(delta); }
-						
-						var isRight = (delta > 0) ? true : false;
-						if (d.data.weight <= 6 && isRight) return false;
-						//console.log(d3.event);
-						deltaPercentage = delta/3.6;
+					
+						//wrap the index of the "neighbor" slice
 						var lastI =  (thisI == 0 ) ? dData.length - 1 : thisI - 1;
-						//console.log("dragging");
-						dData[i].weight += -deltaPercentage;
-						dData[lastI].weight += deltaPercentage;
-							
-							
-						_self.handles.each(function(e,j){
-							if(thisI == j){
-								d3.select(this).selectAll(".arrow.right").classed("active", isRight);
-								d3.select(this).selectAll(".arrow.left").classed("active", !isRight);
-							}
-							
-						})	
-							
-						_self.dataset = dData;	//this is a setter, automatically re-draws
+						
+						//direction of rotation
+						var isCW = (delta > 0) ? true : false;
+						
+						if (dData[thisI].weight <= 6 && isCW) return false;
+						else if (dData[lastI].weight <= 6 && !isCW ) return false;
+						else{
+							//offset the whole thing, since [0].startAngle is always 0
+							if(thisI == 0){ _self.offset.angle +=  _self.deg2rad(delta); }
+							//console.log(d3.event);
+							deltaPercentage = delta/3.6;
+
+							//console.log("dragging");
+							dData[i].weight += -deltaPercentage;
+							dData[lastI].weight += deltaPercentage;
+
+
+							_self.handles.each(function(e,j){
+								if(thisI == j){
+									d3.select(this).selectAll(".arrow.right").classed("active", isCW);
+									d3.select(this).selectAll(".arrow.left").classed("active", !isCW);
+								}
+
+							})	
+
+							_self.dataset = dData;	//this is a setter, automatically re-draws
+						}
+						
 					}
 					
 					lastA = point.deg;
@@ -184,6 +193,9 @@ inPp.update = function(){
 		            .attr("d", this.arc);   //this creates the actual SVG path using the associated data (pie) with the arc drawing function*/
 		this.handles.data(this.pie);
 		this.perc.data(this.pie);
+		
+		
+		
 		this.sliceGroup.attr(
 	    "transform", 
 		function(d,i){
@@ -221,6 +233,13 @@ inPp.update = function(){
 				_scale = (_scale > 1) ? 1 : (_scale < 0.5 )? 0.5 : _scale;
 				return "translate(" + _self.arc.centroid(d) + ") scale("+_scale+","+_scale+") rotate("+ _self.rad2deg( -_self.offset.angle )+")";        //this gives us a pair of coordinates like [50, 50]
 	        })
+	
+				this.foreignRate.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
+					            //we have to make sure to set these before calling arc.centroid
+					            d.innerRadius = 0;
+					            d.outerRadius = r;
+					            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
+					        })
 	
 		this.foreignBody.select(".weight")  //update label for each foreignBody
 			.text(function(d, i) { return _self.data[i].weight.toFixed(_self.precision)+"%"; });        
@@ -320,21 +339,13 @@ inPp.buildLabels = function(){
 		return "rotate("+_ro+") translate( 0 "+_off+")"
 	});
 	
+
+	
 }
 
 
 
 inPp.buildIcongroups = function(){
-	_self = this;
-	this.icongroup = this.slices.append("g").attr("class","icongroup").attr("id", function(d){return d.data.ser_id })   
-		.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
-	            //we have to make sure to set these before calling arc.centroid
-	            d.innerRadius = 0;
-	            d.outerRadius = r;
-	            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
-	        })
-
-	
 	var icnW = 100;
 	var icnH = 100;
 	
@@ -348,7 +359,43 @@ inPp.buildIcongroups = function(){
 	var bodyCY = bodyH/2;
 	var vOff = 25;
 	var fOff = 0;
-	var labelPad = 4;
+	var labelPad = 6;
+	
+	_self = this;
+	this.icongroup = this.slices.append("g").attr("class","icongroup").attr("id", function(d){return d.data.ser_id })   
+		.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
+	            //we have to make sure to set these before calling arc.centroid
+	            d.innerRadius = 0;
+	            d.outerRadius = r;
+	            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
+	        })
+	
+	this.foreignRate = this.slices.append("foreignObject")
+		.attr({
+			"width":icnW,
+			"height":icnH,
+			"x":-icnCX, "y":-icnH
+		}).attr("transform", function(d) {                    //set the icon's origin to the center of the arc
+		            //we have to make sure to set these before calling arc.centroid
+		            d.innerRadius = 0;
+		            d.outerRadius = r;
+		            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
+		        })
+		
+	this.rateBody = this.foreignRate.append("xhtml:body").attr("class","foreign");
+	
+	this.rateLabel = this.rateBody.append("div")                                     //add a label to each slice
+		.attr({
+			"class":"series rate",
+		}).style({
+			height:icnH
+		}).append("h2").text(function(d, i) { 
+			var rate = +d.data.value;
+			rate = +rate;
+			rate = rate.toFixed(_self.precision);
+			return rate+"%";
+		})
+	
 	
 	this.slices.each(function(d){
 		
@@ -372,33 +419,27 @@ inPp.buildIcongroups = function(){
 	this.icongroup.each(function(d){d.rateMode = false});
 	
 	
+	
+
+	
+	
 	this.foreignBody = this.icongroup.append("foreignObject")
 		.attr({
 			"class": "foreignBody",
 			"width":bodyW,
-			"height":bodyH,
+			"height":icnCY,
 			"x":-bodyCX,
-			"y":-bodyCY,
+			"y":icnCY,
 			"style":"color:white"
 		}).append("xhtml:body").attr("class","foreign");
 		
 		
-		this.rateLabel = this.foreignBody.append("div")                                     //add a label to each slice
-			.attr({
-				"class":"series rate",
-			}).style({
-				height:icnH
-			}).append("h2").text(function(d, i) { 
-				var rate = +d.data.value;
-				rate = +rate;
-				rate = rate.toFixed(_self.precision);
-				return rate+"%";
-			})
+		
 			
 		this.foreignBody.append("p")                                     //add a label to each slice
 			.attr({
-				"class":"series label active",
-			}).style("margin-top", +labelPad).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
+				"class":"series label",
+			}).style("margin-top", labelPad).text(function(d, i) { return _self.data[i].program_name; });        //get the label from our original data array  */
 			
 	/*	this.weightLabel = this.foreignBody.append("h2")                                     //add a label to each slice
 			.attr({
@@ -453,11 +494,16 @@ inPp.updateSegs = function(){
 
 inPp.addClickHandlers = function(){
 	console.log("adding click handlers");
-	this.icongroup.on("click", function(d,i) {
+	this.slices.on("click", function(d,i) {
 		console.log("Click!");
 		d.rateMode = !d.rateMode;
 		$this = $(this);
+		
 		$this.find(".series.rate").toggleClass("inactive");
+		
+	
+		
+		_self.update();
 	});
 }
 

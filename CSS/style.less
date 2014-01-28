@@ -38,11 +38,7 @@ body.main {
 		overflow: hidden;
 }
 
-::-webkit-scrollbar {
-    height: 0;
-    width: 0;
-    visibility: hidden;
-}
+ 
 
 h1{
 	font-family: "title";
@@ -163,6 +159,7 @@ p{
 			&.inactive{
 				opacity:0;
 				-webkit-transition: opacity 1s;
+				
 			}
 			& p{
 				font-size: 1.25em;
@@ -171,9 +168,11 @@ p{
 			& h1{
 				color: @lightblue;
 				font-size: 8em;
-				margin:.25em;
+				margin:0;
 				padding:0;
 				width:auto;
+				display:inline-block;
+				line-height:1.2em;
 				&:after{
 					content:"%";
 					font-size:.5em;
@@ -437,8 +436,11 @@ margin:0;
 
 .series{
 	opacity: 1;
+	
+
 	&.inactive{
 		opacity: 0;
+
 	}
 }
 .foreign{text-align:center;
@@ -464,7 +466,6 @@ body.foreign{
 	font-size: 24px;
 }
 .series.rate{
-	padding-top:25%;
 	.noClick;
 	.noSelect;
 }

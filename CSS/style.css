@@ -25,11 +25,6 @@ body.main {
 
   overflow: hidden;
 }
-::-webkit-scrollbar {
-  height: 0;
-  width: 0;
-  visibility: hidden;
-}
 h1 {
   font-family: "title";
   line-height: 1em;
@@ -158,9 +153,11 @@ p {
 .col.calc .rate h1 {
   color: #a4dbe8;
   font-size: 8em;
-  margin: .25em;
+  margin: 0;
   padding: 0;
   width: auto;
+  display: inline-block;
+  line-height: 1.2em;
 }
 .col.calc .rate h1:after {
   content: "%";
@@ -419,7 +416,6 @@ body.foreign {
   font-size: 24px;
 }
 .series.rate {
-  padding-top: 25%;
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
