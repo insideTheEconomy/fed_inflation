@@ -16,7 +16,7 @@ var init = function(){
 		//console.log("error");
 		drawIcons();
 	})*/
-	$(".static_rate").html(national_rate);
+	$(".static_rate").html(national_rate.toFixed(2));
 	drawIcons();
 	window.setTimeout( function(){
 	//	d3.selectAll("path, circle, polygon, line").attr("fill",  null).attr("stroke",null);

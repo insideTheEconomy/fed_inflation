@@ -126,9 +126,9 @@ p{
 	float:left;
 	margin: 0px;
 	padding: @pad / 4;
-	display: inline-block;
+	display: block;
 	width: @colW - @pad /2;
-	height: @bodyHeight;
+	height: auto;
 	-webkit-box-sizing: content-box;
 	& h1{
 		font-size: 3.6em;
@@ -223,6 +223,8 @@ p{
 		line-height: 1.5em;
 	}
 	& .lab{
+		.noClick;
+		.noSelect;
 		pointer-events:none;
 		-webkit-transition: opacity @tranTime;
 		display: block;
@@ -233,8 +235,7 @@ p{
 		padding : @binW /4;
 		padding-top: @binW / 3;
 		&.inactive{
-			width:0;
-			height:0;
+
 			
 			opacity: 0;
 			visibility: hidden;
@@ -291,6 +292,7 @@ h1,h2,p{
 }
 
 .bin.phase2{
+	-webkit-transition: all @tranTime;
 	width: @binW3 ;
 	height: @binW3 ;
 	margin: @pad/2;
@@ -334,12 +336,7 @@ h1,h2,p{
 	}
 }
 
-.phase2{
-	 transition: -webkit-transform .25s ease-out;
-	&.inactive{
-		-webkit-transform: rotate(90);
-	}
-}
+
 
 /*animations*/
 @-webkit-keyframes pulse {
@@ -461,6 +458,8 @@ body.foreign{
 }
 
 .percentage{
+	.noClick;
+	.noSelect;
 	fill: @lightblue;
 	stroke: none;
 	font-size: 24px;

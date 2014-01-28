@@ -18,7 +18,7 @@ var inPie = function( _w, _h) {
 	this.startAngle = 0;
 	this.offset.angle = 0;
 	this.segProp = {r: this.r-12}
-	this.precision = 1;
+	this.precision = 2;
 }
 inPp = inPie.prototype;
 
@@ -234,12 +234,7 @@ inPp.update = function(){
 				return "translate(" + _self.arc.centroid(d) + ") scale("+_scale+","+_scale+") rotate("+ _self.rad2deg( -_self.offset.angle )+")";        //this gives us a pair of coordinates like [50, 50]
 	        })
 	
-				this.foreignRate.attr("transform", function(d) {                    //set the icon's origin to the center of the arc
-					            //we have to make sure to set these before calling arc.centroid
-					            d.innerRadius = 0;
-					            d.outerRadius = r;
-					            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
-					        })
+			
 	
 		this.foreignBody.select(".weight")  //update label for each foreignBody
 			.text(function(d, i) { return _self.data[i].weight.toFixed(_self.precision)+"%"; });        
@@ -370,31 +365,7 @@ inPp.buildIcongroups = function(){
 	            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
 	        })
 	
-	this.foreignRate = this.slices.append("foreignObject")
-		.attr({
-			"width":icnW,
-			"height":icnH,
-			"x":-icnCX, "y":-icnH
-		}).attr("transform", function(d) {                    //set the icon's origin to the center of the arc
-		            //we have to make sure to set these before calling arc.centroid
-		            d.innerRadius = 0;
-		            d.outerRadius = r;
-		            return "translate(" + _self.arc.centroid(d) + ")";        //this gives us a pair of coordinates like [50, 50]
-		        })
-		
-	this.rateBody = this.foreignRate.append("xhtml:body").attr("class","foreign");
-	
-	this.rateLabel = this.rateBody.append("div")                                     //add a label to each slice
-		.attr({
-			"class":"series rate",
-		}).style({
-			height:icnH
-		}).append("h2").text(function(d, i) { 
-			var rate = +d.data.value;
-			rate = +rate;
-			rate = rate.toFixed(_self.precision);
-			return rate+"%";
-		})
+
 	
 	
 	this.slices.each(function(d){
@@ -419,7 +390,26 @@ inPp.buildIcongroups = function(){
 	this.icongroup.each(function(d){d.rateMode = false});
 	
 	
+	this.foreignRate = this.icongroup.append("foreignObject")
+		.attr({
+			"width":icnW,
+			"height":icnH,
+			"x":-icnCX, "y":-icnH
+		});
+		
+	this.rateBody = this.foreignRate.append("xhtml:body").attr("class","foreign");
 	
+	this.rateLabel = this.rateBody.append("div")                                     //add a label to each slice
+		.attr({
+			"class":"series rate inactive",
+		}).style({
+			height:icnH
+		}).append("h2").text(function(d, i) { 
+			var rate = +d.data.value;
+			rate = +rate;
+			rate = rate.toFixed(_self.precision);
+			return rate+"%";
+		})
 
 	
 	
@@ -429,7 +419,7 @@ inPp.buildIcongroups = function(){
 			"width":bodyW,
 			"height":icnCY,
 			"x":-bodyCX,
-			"y":icnCY,
+			"y":vOff+labelPad,
 			"style":"color:white"
 		}).append("xhtml:body").attr("class","foreign");
 		
