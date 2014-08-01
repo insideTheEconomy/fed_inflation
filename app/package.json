@@ -10,8 +10,8 @@
   "window": {
     "title": "Your Inflation Rate",
     "icon": "link.png",
-    "toolbar": true,
-    "frame": true,
+    "toolbar": false,
+    "frame": false,
     "width": 1024,
     "height": 768,
     "position": "mouse",

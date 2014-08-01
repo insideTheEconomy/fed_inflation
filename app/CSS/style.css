@@ -116,7 +116,8 @@ p {
 }
 .col h2 {
   font-size: 1.5em;
-  /*max-height: 3.5em;*/
+  /*max-height: 3.5em; */
+
 }
 .col h2,
 .col h1 {
@@ -451,20 +452,18 @@ body.foreign {
   margin-right: 1em;
   top: 30px;
   width: 50%;
-  left: 1%;
+  left: 2%;
   font-style: italic;
   opacity: 0.7;
 }
-
-#ada{
-	position: fixed;
-	bottom: 0;
-	left: 940px;
+#ada {
+  position: fixed;
+  top: 690px;
+  left: 940px;
 }
-
-.adaText{
-	background-color: black !important;
-	background-image: none;
-	font-family: Helvetica;
-	color: white !important;
+.adaText {
+  background-color: black !important;
+  background-image: none;
+  font-family: Helvetica;
+  color: white !important;
 }

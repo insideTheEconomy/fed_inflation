@@ -4,6 +4,7 @@ var node;
 var svg;
 var resetContent;
 var adaMode = false;
+var nwk;
 $.fn.redraw = function(){
   $(this).each(function(){
     var redraw = this.offsetHeight;
@@ -54,7 +55,9 @@ var init = function(){
 	
 	
 	window.setInterval(setAda, 3000)
-	
+	nwk = new nwKiosk();
+	nwk.setup();
+	nwk.goFull();
 }
 var duration = 300;
 

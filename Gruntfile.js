@@ -10,7 +10,7 @@ module.exports = function(grunt) {
 	        linux64: false, // We don't need linux64
 			keep_nw: true
 	    },
-	    src: ['./**/*']
+	    src: ['./app/**/*']
 	},
 	});
 	
