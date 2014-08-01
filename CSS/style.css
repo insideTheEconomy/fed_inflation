@@ -53,7 +53,7 @@ p {
   width: 666.6666666666666px;
 }
 #container.phase2 > .calc > h1 {
-  margin-left: -200;
+  margin-left: -215;
 }
 #container.loading {
   opacity: 0;
@@ -61,17 +61,17 @@ p {
 .tile {
   float: left;
   width: 124;
-  height: 124;
+  height: 128;
   -webkit-box-sizing: border-box;
   margin: 0;
   margin-top: 1em;
   text-align: center;
 }
 .tile p {
-  font-size: 1.2em;
+  font-size: 1.1em;
   line-height: 1em;
   width: auto;
-  margin-top: -0.9em;
+  margin-top: .4em;
   text-shadow: 1px 1px 1px black;
 }
 .iconlabel {
@@ -84,6 +84,7 @@ p {
 .icon {
   margin: 16px;
   margin-top: 0;
+  margin-bottom: 0;
   width: 92px;
   height: 92px;
   border-radius: 46px;
@@ -115,7 +116,7 @@ p {
 }
 .col h2 {
   font-size: 1.5em;
-  max-height: 3.5em;
+  /*max-height: 3.5em;*/
 }
 .col h2,
 .col h1 {
@@ -145,6 +146,7 @@ p {
 .col.calc .rate.inactive {
   opacity: 0;
   -webkit-transition: opacity 1s;
+  line-height: 2em;
 }
 .col.calc .rate p {
   font-size: 1.25em;
@@ -205,18 +207,25 @@ p {
   visibility: hidden;
 }
 .bin .prompt {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   pointer-events: none;
   -webkit-transition: opacity 0.5s;
   opacity: 1;
-  padding: .5em;
+  padding: 44.8px;
+  border-radius: 89.6px;
   position: absolute;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 100;
   text-align: center;
-  height: 4em;
+  height: 179.2px;
   width: 179.2px;
   margin-left: 219.73333333333332px;
-  margin-top: 305.3333333333333px;
+  margin-top: 219.73333333333332px;
 }
 .bin .prompt h3 {
   font-size: 1.5em;
@@ -379,7 +388,7 @@ p {
   line-height: 1em;
   color: white;
   text-shadow: 0 0 3px #000000, 0 0 5px #a4dbe8;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: #000;
   -webkit-box-shadow: 0 1px 2px 2px #a4dbe8, 0 3px 5px 2px #a4dbe8;
   border-radius: .5em;
 }
@@ -429,4 +438,33 @@ body.foreign {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+.pie {
+  -webkit-transition: 0.5s opacity;
+  opacity: 1;
+}
+.pie.inactive {
+  opacity: 0;
+}
+.definition {
+  position: absolute;
+  margin-right: 1em;
+  top: 30px;
+  width: 50%;
+  left: 1%;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+#ada{
+	position: fixed;
+	bottom: 0;
+	left: 940px;
+}
+
+.adaText{
+	background-color: black !important;
+	background-image: none;
+	font-family: Helvetica;
+	color: white !important;
 }

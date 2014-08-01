@@ -1,14 +1,17 @@
 {
   "main": "index.html",
-  "name": "nw-demo",
-  "description": "demo app of node-webkit",
+  "name": "Inflation_Calculator",
+  "description": "Your Inflation Rate",
   "version": "0.1.0",
-  "keywords": [ "demo", "node-webkit" ],
+  "keywords": [
+    "demo",
+    "node-webkit"
+  ],
   "window": {
-    "title": "node-webkit demo",
+    "title": "Your Inflation Rate",
     "icon": "link.png",
     "toolbar": true,
-    "frame": false,
+    "frame": true,
     "width": 1024,
     "height": 768,
     "position": "mouse",
@@ -16,10 +19,14 @@
     "min_height": 200,
     "max_width": 800,
     "max_height": 600,
-    "kiosk" : false
+    "kiosk": false
   },
   "webkit": {
     "plugin": false
   },
-  "chromium-args": "--remote-debugging-port=9222"
+  "chromium-args": "--remote-debugging-port=9222",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-node-webkit-builder": "^0.1.21"
+  }
 }

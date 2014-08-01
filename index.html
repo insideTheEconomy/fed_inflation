@@ -3,13 +3,17 @@
 	<meta charset="utf-8">
 	<script type="text/javascript" src="JS/d3.v3.js"></script>
 	<script type="text/javascript" src="JS/jquery-1.9.1.js"></script>
-	<script type="text/javascript" src="JS/jquery-ui.js"></script>
+	<link href="CSS/jquery-ui-1.10.4.custom.css" rel="stylesheet">
+	<script type="text/javascript" src="JS/jquery-ui-1.10.4.custom.js"></script>
+
 	<script type="text/javascript" src="JS/jquery.easing.1.3.js"></script>
 	<script type="text/javascript" src="JS/data.js"></script>
 	<script type="text/javascript" src="JS/pie.js"></script>
 	<script type="text/javascript" src="JS/functions.js"></script>
 	
 	
+	
+
 	<link rel="stylesheet" type="text/css" href="CSS/style.css">
 	<link rel >
 </head>
@@ -32,16 +36,21 @@
 	    </filter>
 	  </defs>
 	</svg>
-<p class = "debug"></p>
-<audio id = "click" style="display: none;" src="SND/worms.mp3"></audio>
+	
+
+
 <div id="container" class="loading">
 	
 	<div class="col left"></div>
 	<div class="col right">
 		<h1>WHAT'S YOUR INFLATION RATE?</h1>
 		<h2>What you buy can make your inflation rate different from the national rate.</h2>
-		<div class = "bin"><div class = "lab"><h2>Drag your 5 biggest monthly expenses here.</h2></div><div class = "prompt inactive"><h3>Touch an Item to see its rate.</h3></div></div>
+		<div class = "bin"><div class = "lab"><h2>Drag up to 5 monthly expenses here.</h2></div><div class = "prompt inactive"><h3>Touch an item to see its rate.</h3></div></div>
+			
 	</div>	
+	
+
+	
 	<div class ="col calc">
 	
 			<h1 class="heading phase2">HOW DO YOU SPEND YOUR MONEY?</h1>
@@ -52,7 +61,18 @@
 		</div>
 
 </div>
-<div id ="footer"><div id ="button" class="inactive phase1"><h3>NEXT</h3></div></div>
+<div id ="footer"><h2 class = "definition">The inflation rate is the annual rate of change in the price of a typical basket of consumer goods and services, as measured by the CPI.</h2><div id ="button" class="inactive phase1"><h3>NEXT</h3></div></div>
+
+
+<div id="alert" title="Too many items.">
+  <p>
+    
+   You've already got 5 items in your bin. 
+  </p>
+  <p>
+  	You'll need to remove one to add any more.
+  </p>
+</div>
 <script>
 	
 
@@ -61,7 +81,19 @@
 	     
 	);
 	
-</script>
 
+	    $( "#alert" ).dialog({
+	      modal: true,
+	autoOpen:false,
+	      buttons: {
+	        Ok: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+
+	
+</script>
+<img id="ada" src = "IMG/ada.png" draggable="false"></img>
 </body>
 </html>

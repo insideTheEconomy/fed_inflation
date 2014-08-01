@@ -3,11 +3,16 @@ var container;
 var node;
 var svg;
 var resetContent;
+var adaMode = false;
 $.fn.redraw = function(){
   $(this).each(function(){
     var redraw = this.offsetHeight;
   });
 };
+function setAda(){
+	console.log("ADA")
+		$("p,a,li,h1,h2,h3").toggleClass("adaText", adaMode);
+}
 var p;
 var init = function(){
 	//console.log("loading data");
@@ -26,24 +31,29 @@ var init = function(){
 		//console.log("going to phase 2");
 		phase2Transition();
 		$(this).toggleClass("phase1 phase2");
+
 	});
 	
 	$("#footer").on("click", "#button.phase2", function(){
 		$(this).toggleClass("phase2 phase3");
 		$(this).find("h3").text("RESET");
 		phase3Transition();
+
 	});
 	$("#footer").on("click", "#button.phase3", function(){
 		$("#container").addClass("loading");
 		location.reload();
 	});
 	
-
-
+	$("body").on("click", "#ada", function(){
+	//	alert("ada");
+		adaMode = !adaMode;
+		setAda();
+	})
 	
 	
-
 	
+	window.setInterval(setAda, 3000)
 	
 }
 var duration = 300;
@@ -116,7 +126,7 @@ var phase2Transition = function(){
 
 var phase3Transition = function(){
 	var heading ="HOW DOES YOUR RATE COMPARE?"
-	var body = "You might be spending money on things that have a different inflation rate from the national rate."
+	var body = "See how the inflation rate for these items compares to the national rate."
 		$(".phase2.heading").text(heading).redraw();
 		$(".phase2.body").text(body).redraw();
 		$(".natl.rate, .lab").removeClass("inactive");
@@ -184,7 +194,14 @@ var drawIcons = function (){
 		tolerance: "fit",
 		drop : function(e,ui){
 			if ($(".inBin").length >= 5){
-				alert("You've already got 5 items, you'll need to remove one to add any more.");
+				
+				
+			
+				    $( "#alert" ).dialog("open");
+			
+				
+				
+				//alert("You've already got 5 items, you'll need to remove one to add any more.");
 				return false;
 			}else{
 				var hasItems = ($(".inBin").length > 0);
@@ -192,6 +209,7 @@ var drawIcons = function (){
 			}
 			ui.draggable.toggleClass("inBin", true);
 			$(".lab").toggleClass("inactive", true);
+		
 		}
 	})
 	

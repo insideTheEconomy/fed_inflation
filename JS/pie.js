@@ -55,9 +55,10 @@ inPp.build = function(sel, _data, _icons){
 	this.svg = this.vis
 	    .append("svg:g")                
 	       .attr("transform", "translate(" + this.offset.x + "," + this.offset.y + ")")    
-			.attr("class","pie")
+			.attr("class","pie inactive")
 			_rad = this.r;
-	this.sliceGroup = this.svg.append("g");
+			//this.sliceGroup = this.svg.append("g");
+	
 
 	//Helper to create paths from arc data
 	this.arc = d3.svg.arc()
@@ -69,12 +70,11 @@ inPp.build = function(sel, _data, _icons){
 	this.pie = d3.layout.pie()           //this will create arc data for us given a list of values
 	    .value(function(d) { return d.weight; }).sort(null);    //we must tell it out to access the value of each element in our data array
 	
-
-	this.slices = this.sliceGroup.selectAll("g.slice")     
-		.data(this.pie)     //bind data to the pie layout            
-		.enter()                          
-		.append("svg:g")                
-		.attr("class", "slice")
+	/*	this.slices = this.sliceGroup.selectAll("g.slice")     
+			.data(this.pie)     //bind data to the pie layout            
+			.enter()                          
+			.append("svg:g")                
+			.attr("class", "slice")*/
 	
 
 	
@@ -84,7 +84,19 @@ inPp.build = function(sel, _data, _icons){
 	            .attr("fill", function(d, i) { return null } ) //set the color for each slice to be chosen from the color function defined above
 	            .style("fill-opacity","0")	
 				.attr("d", this.arc)     */                               //this creates the actual SVG path using the associated data (pie) with the arc drawing function
+
+	this.sliceGroup = this.svg.append("g").attr("class","sliceGroup");
+	
+	
+	this.slices = this.sliceGroup.selectAll("g.slice")     
+		.data(this.pie)     //bind data to the pie layout            
+		.enter()                          
+		.append("svg:g")                
+		.attr("class", "slice")
+		
+	this.buildSegs();
 	this.buildLabels();
+	
 	this.buildIcongroups();
 	this.buildHandles();		
 		//drag icon
@@ -97,7 +109,7 @@ inPp.build = function(sel, _data, _icons){
 			var lastA;
 			
 			this.drag = d3.behavior.drag()
-				.origin(null).on("dragstart", function(){
+				.origin(null).on("dragstart", function(d, i){
 					//init angle is based on startAngle of handle
 					initA = _self.rad2deg(d.startAngle);
 					lastA = initA;
@@ -177,6 +189,7 @@ inPp.build = function(sel, _data, _icons){
 		}
 		
 		this.handles.call(this.drag);
+		$(".pie").attr("class", "pie")
 
 }
 
@@ -214,7 +227,7 @@ inPp.update = function(){
 			transform: function(d,i){
 				_c = (d.endAngle - d.startAngle);
 				console.log("_c: "+_c);
-				var angle = d.startAngle + (_c/2) + _self.offset.angle;
+				var angle = d.startAngle + (_c/2) /*+ _self.offset.angle*/;
 				console.log("angle "+angle);
 				//console.log(angle);
 		        return "rotate("+_self.rad2deg(angle)+") translate( 0 "+(-_self.r+24)+")"
@@ -303,14 +316,14 @@ inPp.buildHandles = function(){
 	        return _self.polyL.map(function(d) { return [d.x,d.y].join(" "); }).join(",");}).attr("class","handle arrow left");
 	
 	this.handles.attr("filter","url(#glowie)");
-	this.buildSegs();
+	
 }
 
 
 
 inPp.buildLabels = function(){
 	var _self  = this;
-	this.perc = this.svg.selectAll("g.perc").data(this.pie).enter().append("g");
+	this.perc = this.sliceGroup.selectAll("g.perc").data(this.pie).enter().insert("g");
 	this.perc.attr({
 	    "class":"perc",
 	    transform: function(d,i){
@@ -443,6 +456,7 @@ inPp.buildIcongroups = function(){
 
 
 inPp.calcSegs = function(){
+	_self = this;
 	this.slices.each(function(d){
 		_pad = _self.deg2rad(6);
 	    _start = d.startAngle+_pad;
@@ -469,7 +483,7 @@ inPp.buildSegs = function(){
 	    .append("g").attr("class","segments");
 	this.segs.datum(function(d){return d.angles});
 
-	this.segs.append("path").attr("class", "seg").attr("d", this.segLine).attr("stroke-dasharray","5,5");
+	this.segs.insert("path").attr("class", "seg").attr("d", this.segLine).attr("stroke-dasharray","5,5");
 }
 
 inPp.updateSegs = function(){

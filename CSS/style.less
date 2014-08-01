@@ -63,9 +63,9 @@ p{
 	&.phase2{
 		left: -@colW;
 			& > .right{
-				width: (@colThirds * 2 )- @pad /2;
+				width: (@colThirds * 2 )- @pad /2 ;
 			}
-		& > .calc > h1{margin-left: -200  }
+		& > .calc > h1{margin-left: -215  }
 	}
 	&.loading{
 		opacity:0;
@@ -78,14 +78,19 @@ p{
 	
 	float: left;
 	width: @gridStep;
-	height: @gridStep;
+	height: @gridStep+4;
 	-webkit-box-sizing: border-box;
 	margin:0;
 	margin-top:1em;
 	
 
 	& p{
-		.iconlabel;
+		font-size: 1.1em;
+		line-height: 1em;
+		width: auto;
+		margin-top: .4em;
+		text-shadow: 1px 1px 1px black;
+
 		
 	}
 	text-align:center;
@@ -99,13 +104,15 @@ p{
 	margin-top:-.9em;
 	text-shadow: 1px 1px 1px black;
 }
-
+ 
 .icon{
 	margin:@pad / 2;
 	margin-top:0;
+	margin-bottom:0;
 	width: @icIn;
 	height: @icIn;
 	border-radius: @icIn / 2; 
+
 /*	border: 2px solid fade(white, 90%);*/
 
 	background-image: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 58, color-stop(0%, rgb(16, 6, 255)), color-stop(100%, black));
@@ -138,7 +145,7 @@ p{
 	& h2{
 	
 		font-size :1.5em;
-		max-height: 3.5em;
+		/*max-height: 3.5em; */
 	}
 	& h2, h1{
 		-webkit-transition: all 1s;
@@ -159,6 +166,7 @@ p{
 			&.inactive{
 				opacity:0;
 				-webkit-transition: opacity 1s;
+				line-height: 2em;
 				
 			}
 			& p{
@@ -206,8 +214,8 @@ p{
 @binW3 : (@colThirds*2 )- @pad*2;
 @promptW : @binW / 2.5;
 @promptOffH: (@binW3 - @promptW)/2;
-@promptH: 4em;
-@promptOffV: (@binW3 - @promptH - 4em)/2;
+@promptH : @binW / 2.5;
+@promptOffV: (@binW3 - @promptW)/2;
 .bin{
 	-webkit-transition: all 1s;
 	width: @binW ;
@@ -244,10 +252,13 @@ p{
 	}
 
 	& .prompt{
+		.noClick;
+		.noSelect;
 		pointer-events:none;
 		-webkit-transition: opacity @tranTime;
 		opacity: 1;
-		padding: .5em;
+		padding: @promptW/4;
+		border-radius: @promptW/2;
 		position:absolute;
 		background-color: @black;
 		z-index: 100;
@@ -423,7 +434,8 @@ margin:0;
 		line-height: 1em;
 		color: white;
 		text-shadow: 0 0 3px black, 0 0 5px @lightblue, ;
-			background-color: @black;
+			background-color: #000;
+			
 			-webkit-box-shadow: 0 1px 2px 2px @lightblue, 0 3px 5px 2px @lightblue;
 			border-radius: .5em;
 			
@@ -467,5 +479,35 @@ body.foreign{
 .series.rate{
 	.noClick;
 	.noSelect;
+}
+
+
+.pie{
+	-webkit-transition: @tranTime opacity;
+	opacity: 1;
+	&.inactive{
+		opacity: 0;
+	}
+	
+}
+
+#alert{
+}
+
+.definition{
+	position: absolute;
+	margin-right: 1em;
+	top: 30px;
+	width: 50%;
+	left: 49%;
+	font-style: italic;
+	opacity: 0.7;
+}
+
+.adaText{
+	background-color: black !important;
+	background-image: none;
+	font-family: Helvetica;
+	color: white !important;
 }
 
