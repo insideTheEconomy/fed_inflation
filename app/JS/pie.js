@@ -113,6 +113,7 @@ inPp.build = function(sel, _data, _icons){
 					//init angle is based on startAngle of handle
 					initA = _self.rad2deg(d.startAngle);
 					lastA = initA;
+					keyDownSnd.play();
 				})
 				.on("drag", function(d, i){
 					
@@ -161,6 +162,7 @@ inPp.build = function(sel, _data, _icons){
 					lastA = point.deg;
 				}).on("dragend", function(){
 					d3.select(this).selectAll(".arrow").classed("active", false);
+					keyUpSnd.play();
 				})
 			//using d3 drag event, return a point and rad/deg rotation around the origin
 		var ev2point = function(ev){

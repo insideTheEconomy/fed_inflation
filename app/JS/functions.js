@@ -15,7 +15,16 @@ function setAda(){
 		$("p,a,li,h1,h2,h3").toggleClass("adaText", adaMode);
 }
 var p;
+var keyDownSnd;
+var keyUpSnd;
 var init = function(){
+	keyDownSnd = document.createElement('audio');
+	keyDownSnd.setAttribute('src', 'SND/d_click.ogg');
+	keyDownSnd.load();
+
+	keyUpSnd = document.createElement('audio');
+	keyUpSnd.setAttribute('src', 'SND/u_click.ogg');
+	keyUpSnd.load();
 	//console.log("loading data");
 /*	d3.json("data.json", function(error, json){
 		data = json;
@@ -29,6 +38,7 @@ var init = function(){
 	}, 1000)
 	
 	$("#footer").on("click", "#button.phase1", function(){
+		keyDownSnd.play();
 		//console.log("going to phase 2");
 		phase2Transition();
 		$(this).toggleClass("phase1 phase2");
@@ -36,21 +46,26 @@ var init = function(){
 	});
 	
 	$("#footer").on("click", "#button.phase2", function(){
+		keyDownSnd.play();
 		$(this).toggleClass("phase2 phase3");
 		$(this).find("h3").text("RESET");
 		phase3Transition();
 
 	});
 	$("#footer").on("click", "#button.phase3", function(){
+		keyDownSnd.play();
 		$("#container").addClass("loading");
 		location.reload();
 	});
 	
 	$("body").on("click", "#ada", function(){
+		keyDownSnd.play();
 	//	alert("ada");
 		adaMode = !adaMode;
 		setAda();
-	})
+	});
+	
+	
 	
 	
 	
@@ -172,10 +187,12 @@ var drawIcons = function (){
 			thisPos = $this.offset();
 		},
 		start : function(e, ui){
+			keyDownSnd.play();
 			$(this).find(".icon").toggleClass("active", true);
 			$(this).find("p").fadeOut(200);
 		},
 		stop : function(e, ui){
+			keyUpSnd.play();
 			$this = $(this);
 			$this.find(".icon").toggleClass("active", false);
 			$this.find("p").fadeIn(200);
@@ -196,10 +213,11 @@ var drawIcons = function (){
 		hoverClass : "drop-hover",
 		tolerance: "fit",
 		drop : function(e,ui){
+			keyUpSnd.play();
 			if ($(".inBin").length >= 5){
 				
 				
-			
+					
 				    $( "#alert" ).dialog("open");
 			
 				
@@ -221,6 +239,7 @@ var drawIcons = function (){
 		activeClass : ".active",
 		hoverClass : ".drop-hover",
 		drop : function(e,ui){
+			keyUpSnd.play();
 			ui.draggable.toggleClass("inBin", false)
 		}
 	})
