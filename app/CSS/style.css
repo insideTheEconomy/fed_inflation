@@ -18,6 +18,13 @@
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+-webkit-user-select: none !important;
+  -khtml-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+  user-drag: none !important;
 }
 body.main {
   background: url("../IMG/bg.jpg");
